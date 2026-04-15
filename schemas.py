@@ -12,7 +12,7 @@ class UserCreate(BaseModel):
     email: EmailStr 
     
     # Password must be at least 8 characters
-    password: str = Field(..., min_length=8)
+    password: str = Field(..., min_length=8, max_length=72)
 
     # Custom Validator for Password Strength
     @field_validator('password')
@@ -30,6 +30,31 @@ class UserCreate(BaseModel):
             
         if not re.search(r'[\W_]', value):
             raise ValueError('Password must contain at least one special character (e.g., !@#$%)')
+        
+        # ==========================================
+    # NEW: Catch common email typos
+    # ==========================================
+    @field_validator('email')
+    @classmethod
+    def catch_common_email_typos(cls, value):
+        # Convert the Pydantic Email object to a normal string
+        email_str = str(value).lower()
+        
+        # A list of common typos you want to block
+        blocked_domains = {
+            "gmnail.com": "gmail.com",
+            "gamil.com": "gmail.com",
+            "gmai.com": "gmail.com",
+            "yahaoo.com": "yahoo.com",
+            "hotmial.com": "hotmail.com"
+        }
+        
+        # Extract the domain part of the email (everything after the @)
+        domain = email_str.split('@')[1]
+        
+        if domain in blocked_domains:
+            correct_domain = blocked_domains[domain]
+            raise ValueError(f"Invalid domain '{domain}'. Did you mean '{correct_domain}'?")
             
         return value
 
