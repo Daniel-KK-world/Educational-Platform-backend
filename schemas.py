@@ -74,3 +74,25 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+# ==========================================
+# OTP VERIFICATION SCHEMA
+# ==========================================
+class OTPVerify(BaseModel):
+    email: EmailStr
+    # Forces the OTP to be exactly 6 characters
+    otp_code: str = Field(..., min_length=6, max_length=6) 
+
+# ==========================================
+# USER RESPONSE SCHEMA (What we send back)
+# ==========================================
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    email: EmailStr
+    is_active: bool
+    is_verified: bool
+    
+    # This config tells Pydantic it's okay to read data directly 
+    # from a SQLAlchemy model object, not just a standard dictionary.
+    class Config:
+        from_attributes = True
