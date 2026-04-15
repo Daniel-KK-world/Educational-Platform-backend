@@ -12,7 +12,8 @@ SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("No DATABASE_URL found in .env file")
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# pool_pre_ping=True tells SQLAlchemy to check if the connection is alive first!
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

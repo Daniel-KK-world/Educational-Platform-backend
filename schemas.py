@@ -11,7 +11,7 @@ class UserCreate(BaseModel):
     # EmailStr automatically checks if it has a @ and a valid domain
     email: EmailStr 
     
-    # Password must be at least 8 characters
+    # Password must be at least 8 characters and max 72 for bcrypt
     password: str = Field(..., min_length=8, max_length=72)
 
     # Custom Validator for Password Strength
@@ -30,9 +30,12 @@ class UserCreate(BaseModel):
             
         if not re.search(r'[\W_]', value):
             raise ValueError('Password must contain at least one special character (e.g., !@#$%)')
-        
-        # ==========================================
-    # NEW: Catch common email typos
+            
+        # THIS WAS MISSING! We must return the password.
+        return value
+
+    # ==========================================
+    # Catch common email typos
     # ==========================================
     @field_validator('email')
     @classmethod
@@ -62,8 +65,6 @@ class UserCreate(BaseModel):
 # LOGIN SCHEMA (The chill bouncer)
 # ==========================================
 class UserLogin(BaseModel):
-    # We don't need strict validators here, because if they try to log in
-    # with a weak password, it just won't match anything in the DB anyway.
     email: EmailStr
     password: str
 
@@ -75,7 +76,7 @@ class Token(BaseModel):
     token_type: str
 
 # ==========================================
-# OTP VERIFICATION SCHEMA
+# OTP VERIFICATION SCHEMA (V2)
 # ==========================================
 class OTPVerify(BaseModel):
     email: EmailStr
@@ -83,7 +84,7 @@ class OTPVerify(BaseModel):
     otp_code: str = Field(..., min_length=6, max_length=6) 
 
 # ==========================================
-# USER RESPONSE SCHEMA (What we send back)
+# USER RESPONSE SCHEMA (V2)
 # ==========================================
 class UserResponse(BaseModel):
     id: int
@@ -93,6 +94,6 @@ class UserResponse(BaseModel):
     is_verified: bool
     
     # This config tells Pydantic it's okay to read data directly 
-    # from a SQLAlchemy model object, not just a standard dictionary.
+    # from a SQLAlchemy model object.
     class Config:
         from_attributes = True
