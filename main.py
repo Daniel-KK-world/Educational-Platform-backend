@@ -7,8 +7,8 @@ from datetime import datetime, timedelta, timezone
 import models
 import schemas
 import security
-import utils          # NEW: For OTP generation
-import dependencies   # NEW: The Security Guard
+import utils          # For OTP generation
+import dependencies   # The Security Guard
 from database import engine, get_db
 
 # Create the database tables if they don't exist yet
@@ -33,16 +33,40 @@ def read_root():
 
 
 # ==========================================
-# 1. REGISTER ENDPOINT (Now with OTP)
+# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)
 # ==========================================
 @app.post("/api/auth/register", status_code=status.HTTP_201_CREATED)
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Step 1: Check if the email exists
     existing_user = db.query(models.User).filter(models.User.email == user.email).first()
+    
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        # If they exist and ARE verified, block them.
+        if existing_user.is_verified:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # If they exist but ARE NOT verified, refresh the data and resend the OTP!
+        else:
+            # Update password just in case they typed a new one this time
+            existing_user.password_hash = security.get_password_hash(user.password)
+            
+            # Generate new OTP (Expires in 10 minutes)
+            otp_code = utils.generate_otp()
+            existing_user.otp_code = otp_code
+            existing_user.otp_expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+            
+            db.commit()
+            
+            # Resend the simulated email
+            utils.send_otp_email(email=existing_user.email, otp_code=otp_code)
+            
+            # We still return 201 so the frontend triggers the OTP screen smoothly
+            return {
+                "message": "Unverified account found. New OTP sent to email.", 
+                "email": existing_user.email
+            }
 
-    # Step 2: Hash the password
+    # Step 2: Hash the password (for completely new users)
     hashed_password = security.get_password_hash(user.password)
 
     # Step 3: Generate the OTP (Expires in 10 minutes)
@@ -72,7 +96,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 # ==========================================
-# 2. VERIFY OTP ENDPOINT (NEW)
+# 2. VERIFY OTP ENDPOINT
 # ==========================================
 @app.post("/api/auth/verify-otp", status_code=status.HTTP_200_OK)
 def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
@@ -83,7 +107,7 @@ def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
     if user.is_verified:
         return {"message": "Account is already verified."}
     
-    # Check if OTP matches and is not expired
+    # Check if OTP matches
     if user.otp_code != payload.otp_code:
         raise HTTPException(status_code=400, detail="Invalid OTP code")
     
@@ -101,7 +125,7 @@ def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
 
 
 # ==========================================
-# 3. LOGIN ENDPOINT (Now checks verification)
+# 3. LOGIN ENDPOINT
 # ==========================================
 @app.post("/api/auth/login", response_model=schemas.Token)
 def login_user(user_credentials: schemas.UserLogin, db: Session = Depends(get_db)):
@@ -110,11 +134,11 @@ def login_user(user_credentials: schemas.UserLogin, db: Session = Depends(get_db
     if not user or not security.verify_password(user_credentials.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
 
-    # V2 Bank Check: Are they verified?
+    # V2 Check: Are they verified?
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Please verify your email before logging in.")
 
-    # V2 Bank Check: Are they deactivated?
+    # V2 Check: Are they deactivated?
     if not user.is_active:
         raise HTTPException(status_code=403, detail="This account has been deactivated.")
 
@@ -124,10 +148,8 @@ def login_user(user_credentials: schemas.UserLogin, db: Session = Depends(get_db
 
 
 # ==========================================
-# 4. GET PROFILE (Protected Route Example)
+# 4. GET PROFILE (Protected Route)
 # ==========================================
-# Notice the Depends(dependencies.get_current_user)! 
-# The security guard checks the token before this code ever runs.
 @app.get("/api/auth/me", response_model=schemas.UserResponse)
 def get_profile(current_user: models.User = Depends(dependencies.get_current_user)):
     return current_user

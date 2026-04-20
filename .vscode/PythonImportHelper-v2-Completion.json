@@ -1,0 +1,674 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "create_engine",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Integer",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Boolean",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "DateTime",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "declarative_base",
+        "importPath": "sqlalchemy.ext.declarative",
+        "description": "sqlalchemy.ext.declarative",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.ext.declarative",
+        "documentation": {}
+    },
+    {
+        "label": "sessionmaker",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Session",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Session",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPException",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "OAuth2PasswordBearer",
+        "importPath": "fastapi.security",
+        "description": "fastapi.security",
+        "isExtraImport": true,
+        "detail": "fastapi.security",
+        "documentation": {}
+    },
+    {
+        "label": "jwt",
+        "importPath": "jose",
+        "description": "jose",
+        "isExtraImport": true,
+        "detail": "jose",
+        "documentation": {}
+    },
+    {
+        "label": "JWTError",
+        "importPath": "jose",
+        "description": "jose",
+        "isExtraImport": true,
+        "detail": "jose",
+        "documentation": {}
+    },
+    {
+        "label": "jwt",
+        "importPath": "jose",
+        "description": "jose",
+        "isExtraImport": true,
+        "detail": "jose",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "models",
+        "description": "models",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "security",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "security",
+        "description": "security",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "engine",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "CORSMiddleware",
+        "importPath": "fastapi.middleware.cors",
+        "description": "fastapi.middleware.cors",
+        "isExtraImport": true,
+        "detail": "fastapi.middleware.cors",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "schemas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "schemas",
+        "description": "schemas",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "utils",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "utils",
+        "description": "utils",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "dependencies",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "dependencies",
+        "description": "dependencies",
+        "detail": "dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "func",
+        "importPath": "sqlalchemy.sql",
+        "description": "sqlalchemy.sql",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.sql",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "EmailStr",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "Field",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "field_validator",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "CryptContext",
+        "importPath": "passlib.context",
+        "description": "passlib.context",
+        "isExtraImport": true,
+        "detail": "passlib.context",
+        "documentation": {}
+    },
+    {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_db():\n    db = SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "SQLALCHEMY_DATABASE_URL",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "SQLALCHEMY_DATABASE_URL = os.getenv(\"DATABASE_URL\")\nif not SQLALCHEMY_DATABASE_URL:\n    raise ValueError(\"No DATABASE_URL found in .env file\")\n# pool_pre_ping=True tells SQLAlchemy to check if the connection is alive first!\nengine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True, pool_recycle=300)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\nBase = declarative_base()\ndef get_db():\n    db = SessionLocal()\n    try:",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "engine",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True, pool_recycle=300)\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\nBase = declarative_base()\ndef get_db():\n    db = SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "SessionLocal",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)\nBase = declarative_base()\ndef get_db():\n    db = SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "Base = declarative_base()\ndef get_db():\n    db = SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_current_user",
+        "kind": 2,
+        "importPath": "dependencies",
+        "description": "dependencies",
+        "peekOfCode": "def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    \"\"\"\n    The main security guard. It intercepts the request, reads the JWT token\n    from the header, and checks if it's valid and if the user still exists.\n    \"\"\"\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )",
+        "detail": "dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "oauth2_scheme",
+        "kind": 5,
+        "importPath": "dependencies",
+        "description": "dependencies",
+        "peekOfCode": "oauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"/api/auth/login\")\ndef get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):\n    \"\"\"\n    The main security guard. It intercepts the request, reads the JWT token\n    from the header, and checks if it's valid and if the user still exists.\n    \"\"\"\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},",
+        "detail": "dependencies",
+        "documentation": {}
+    },
+    {
+        "label": "read_root",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API V2 is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):\n    # Step 1: Check if the email exists\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "register_user",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):\n    # Step 1: Check if the email exists\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:\n        # If they exist and ARE verified, block them.\n        if existing_user.is_verified:\n            raise HTTPException(status_code=400, detail=\"Email already registered\")\n        # If they exist but ARE NOT verified, refresh the data and resend the OTP!\n        else:\n            # Update password just in case they typed a new one this time",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "verify_otp",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):\n    user = db.query(models.User).filter(models.User.email == payload.email).first()\n    if not user:\n        raise HTTPException(status_code=404, detail=\"User not found\")\n    if user.is_verified:\n        return {\"message\": \"Account is already verified.\"}\n    # Check if OTP matches\n    if user.otp_code != payload.otp_code:\n        raise HTTPException(status_code=400, detail=\"Invalid OTP code\")\n    # Ensure datetime comparison is timezone aware",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "login_user",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def login_user(user_credentials: schemas.UserLogin, db: Session = Depends(get_db)):\n    user = db.query(models.User).filter(models.User.email == user_credentials.email).first()\n    if not user or not security.verify_password(user_credentials.password, user.password_hash):\n        raise HTTPException(status_code=401, detail=\"Invalid credentials\", headers={\"WWW-Authenticate\": \"Bearer\"})\n    # V2 Check: Are they verified?\n    if not user.is_verified:\n        raise HTTPException(status_code=403, detail=\"Please verify your email before logging in.\")\n    # V2 Check: Are they deactivated?\n    if not user.is_active:\n        raise HTTPException(status_code=403, detail=\"This account has been deactivated.\")",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "get_profile",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def get_profile(current_user: models.User = Depends(dependencies.get_current_user)):\n    return current_user\n# ==========================================\n# 5. DEACTIVATE ACCOUNT (Soft Delete)\n# ==========================================\n@app.delete(\"/api/auth/me\", status_code=status.HTTP_200_OK)\ndef deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "deactivate_account",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    current_user.is_active = False\n    db.commit()\n    return {\"message\": \"Account deactivated successfully.\"}",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API V2\")\n# ==========================================\n# MIDDLEWARE SETUP\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "User",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class User(Base):\n    __tablename__ = \"users\"\n    # Core Identity\n    id = Column(Integer, primary_key=True, index=True)\n    username = Column(String, index=True)\n    email = Column(String, unique=True, index=True, nullable=False)\n    password_hash = Column(String, nullable=False)\n    # V2: Status Flags\n    is_active = Column(Boolean, default=True)  # For Soft Deletes\n    is_verified = Column(Boolean, default=False) # Flips to True after OTP success",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "UserCreate",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class UserCreate(BaseModel):\n    # Username must be between 3 and 50 characters\n    username: str = Field(..., min_length=3, max_length=50)\n    # EmailStr automatically checks if it has a @ and a valid domain\n    email: EmailStr \n    # Password must be at least 8 characters and max 72 for bcrypt\n    password: str = Field(..., min_length=8, max_length=72)\n    # Custom Validator for Password Strength\n    @field_validator('password')\n    @classmethod",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "UserLogin",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class UserLogin(BaseModel):\n    email: EmailStr\n    password: str\n# ==========================================\n# TOKEN SCHEMA\n# ==========================================\nclass Token(BaseModel):\n    access_token: str\n    token_type: str\n# ==========================================",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "Token",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class Token(BaseModel):\n    access_token: str\n    token_type: str\n# ==========================================\n# OTP VERIFICATION SCHEMA (V2)\n# ==========================================\nclass OTPVerify(BaseModel):\n    email: EmailStr\n    # Forces the OTP to be exactly 6 characters\n    otp_code: str = Field(..., min_length=6, max_length=6) ",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "OTPVerify",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class OTPVerify(BaseModel):\n    email: EmailStr\n    # Forces the OTP to be exactly 6 characters\n    otp_code: str = Field(..., min_length=6, max_length=6) \n# ==========================================\n# USER RESPONSE SCHEMA (V2)\n# ==========================================\nclass UserResponse(BaseModel):\n    id: int\n    username: str",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "UserResponse",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class UserResponse(BaseModel):\n    id: int\n    username: str\n    email: EmailStr\n    is_active: bool\n    is_verified: bool\n    # This config tells Pydantic it's okay to read data directly \n    # from a SQLAlchemy model object.\n    class Config:\n        from_attributes = True",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "get_password_hash",
+        "kind": 2,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "def get_password_hash(password: str) -> str:\n    \"\"\"Takes a plain text password and scrambles it.\"\"\"\n    return pwd_context.hash(password)\ndef verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "verify_password",
+        "kind": 2,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "def verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using your secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "create_access_token",
+        "kind": 2,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "def create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using your secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "SECRET_KEY",
+        "kind": 5,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "SECRET_KEY = os.getenv(\"JWT_SECRET_KEY\", \"my-super-secret-local-key\")\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # Token lasts for 24 hours\n# This sets up Bcrypt, the industry standard for password hashing\npwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\ndef get_password_hash(password: str) -> str:\n    \"\"\"Takes a plain text password and scrambles it.\"\"\"\n    return pwd_context.hash(password)\ndef verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "ALGORITHM",
+        "kind": 5,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "ALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # Token lasts for 24 hours\n# This sets up Bcrypt, the industry standard for password hashing\npwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\ndef get_password_hash(password: str) -> str:\n    \"\"\"Takes a plain text password and scrambles it.\"\"\"\n    return pwd_context.hash(password)\ndef verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "ACCESS_TOKEN_EXPIRE_MINUTES",
+        "kind": 5,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # Token lasts for 24 hours\n# This sets up Bcrypt, the industry standard for password hashing\npwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\ndef get_password_hash(password: str) -> str:\n    \"\"\"Takes a plain text password and scrambles it.\"\"\"\n    return pwd_context.hash(password)\ndef verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "pwd_context",
+        "kind": 5,
+        "importPath": "security",
+        "description": "security",
+        "peekOfCode": "pwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\ndef get_password_hash(password: str) -> str:\n    \"\"\"Takes a plain text password and scrambles it.\"\"\"\n    return pwd_context.hash(password)\ndef verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()",
+        "detail": "security",
+        "documentation": {}
+    },
+    {
+        "label": "generate_otp",
+        "kind": 2,
+        "importPath": "utils",
+        "description": "utils",
+        "peekOfCode": "def generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp\ndef send_otp_email(email: str, otp_code: str):",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "send_otp_email",
+        "kind": 2,
+        "importPath": "utils",
+        "description": "utils",
+        "peekOfCode": "def send_otp_email(email: str, otp_code: str):\n    \"\"\"\n    Simulates sending an email. In a real app, this is where you would connect \n    to an SMTP server or an API like Resend, Mailgun, or AWS SES.\n    \"\"\"\n    # ---------------------------------------------------------\n    # TODO FOR V3: Replace this block with actual SMTP logic\n    # ---------------------------------------------------------\n    # We print a highly visible block to the terminal so you can copy the OTP easily\n    print(\"\\n\" + \"=\"*50)",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "kind": 5,
+        "importPath": "utils",
+        "description": "utils",
+        "peekOfCode": "logger = logging.getLogger(__name__)\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp",
+        "detail": "utils",
+        "documentation": {}
+    }
+]
