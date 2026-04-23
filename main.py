@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
@@ -36,7 +36,11 @@ def read_root():
 # 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)
 # ==========================================
 @app.post("/api/auth/register", status_code=status.HTTP_201_CREATED)
-def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def register_user(
+    user: schemas.UserCreate, 
+    background_tasks: BackgroundTasks, # <-- Added here!
+    db: Session = Depends(get_db)
+):
     # Step 1: Check if the email exists
     existing_user = db.query(models.User).filter(models.User.email == user.email).first()
     
@@ -57,8 +61,8 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
             
             db.commit()
             
-            # Resend the simulated email
-            utils.send_otp_email(email=existing_user.email, otp_code=otp_code)
+            # Fire the email in the background!
+            background_tasks.add_task(utils.send_otp_email, email=existing_user.email, otp_code=otp_code)
             
             # We still return 201 so the frontend triggers the OTP screen smoothly
             return {
@@ -86,8 +90,8 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    # Step 5: Send the simulated email
-    utils.send_otp_email(email=new_user.email, otp_code=otp_code)
+    # Step 5: Fire the email in the background!
+    background_tasks.add_task(utils.send_otp_email, email=new_user.email, otp_code=otp_code)
 
     return {
         "message": "User registered. Please check your email for the OTP.", 

@@ -161,6 +161,14 @@
         "documentation": {}
     },
     {
+        "label": "BackgroundTasks",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
         "label": "OAuth2PasswordBearer",
         "importPath": "fastapi.security",
         "description": "fastapi.security",
@@ -402,6 +410,15 @@
         "documentation": {}
     },
     {
+        "label": "resend",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "resend",
+        "description": "resend",
+        "detail": "resend",
+        "documentation": {}
+    },
+    {
         "label": "get_db",
         "kind": 2,
         "importPath": "database",
@@ -469,7 +486,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API V2 is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):\n    # Step 1: Check if the email exists\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:",
+        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API V2 is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks, # <-- Added here!\n    db: Session = Depends(get_db)",
         "detail": "main",
         "documentation": {}
     },
@@ -478,7 +495,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):\n    # Step 1: Check if the email exists\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:\n        # If they exist and ARE verified, block them.\n        if existing_user.is_verified:\n            raise HTTPException(status_code=400, detail=\"Email already registered\")\n        # If they exist but ARE NOT verified, refresh the data and resend the OTP!\n        else:\n            # Update password just in case they typed a new one this time",
+        "peekOfCode": "def register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks, # <-- Added here!\n    db: Session = Depends(get_db)\n):\n    # Step 1: Check if the email exists\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:\n        # If they exist and ARE verified, block them.\n        if existing_user.is_verified:",
         "detail": "main",
         "documentation": {}
     },
@@ -658,7 +675,7 @@
         "kind": 2,
         "importPath": "utils",
         "description": "utils",
-        "peekOfCode": "def send_otp_email(email: str, otp_code: str):\n    \"\"\"\n    Simulates sending an email. In a real app, this is where you would connect \n    to an SMTP server or an API like Resend, Mailgun, or AWS SES.\n    \"\"\"\n    # ---------------------------------------------------------\n    # TODO FOR V3: Replace this block with actual SMTP logic\n    # ---------------------------------------------------------\n    # We print a highly visible block to the terminal so you can copy the OTP easily\n    print(\"\\n\" + \"=\"*50)",
+        "peekOfCode": "def send_otp_email(email: str, otp_code: str):\n    \"\"\"\n    Sends an email using Resend. If no API key is found in the environment,\n    it safely falls back to simulating the email in the terminal.\n    \"\"\"\n    # =========================================================\n    # FEATURE FLAG: The Safety Net\n    # =========================================================\n    if not resend.api_key:\n        print(\"\\n\" + \"=\"*50)",
         "detail": "utils",
         "documentation": {}
     },
@@ -667,7 +684,16 @@
         "kind": 5,
         "importPath": "utils",
         "description": "utils",
-        "peekOfCode": "logger = logging.getLogger(__name__)\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# Load the key from your .env file\n# If it's not there, this just returns None and our feature flag catches it\nresend.api_key = os.getenv(\"RESEND_API_KEY\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "resend.api_key",
+        "kind": 5,
+        "importPath": "utils",
+        "description": "utils",
+        "peekOfCode": "resend.api_key = os.getenv(\"RESEND_API_KEY\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp",
         "detail": "utils",
         "documentation": {}
     }
