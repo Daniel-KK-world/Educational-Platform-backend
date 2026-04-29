@@ -1,5 +1,7 @@
 # Hawkman Auth API
 
+<img width="1309" height="605" alt="image" src="https://github.com/user-attachments/assets/642fa0fe-82bf-4aee-b855-1a2bce3bd2b3" />
+
 ## 1. System Overview
 
 The Hawkman Auth API is the dedicated identity and access management Service for the Learning Management System (LMS). Designed for high performance and strict security, this service handles user onboarding, session management, and credential exchange utilizing a Two step verification flow.
