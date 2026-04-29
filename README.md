@@ -90,7 +90,7 @@ Protected Routes: Endpoints requiring authorization utilize the get_current_user
 ```
 SECRET_KEY=your_super_secret_jwt_key
 ALGORITHM=****
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACCESS_TOKEN_EXPIRE_MINUTES= 60 * 24
 ```
 
 # OTP Provider (Resend)
