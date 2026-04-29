@@ -17,7 +17,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Hawkman Auth API V2")
 
 # ==========================================
-# MIDDLEWARE SETUP
+# MIDDLEWARE SETUP (Need to change this!!!!)
 # ==========================================
 app.add_middleware(
     CORSMiddleware,

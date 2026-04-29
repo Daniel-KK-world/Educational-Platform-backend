@@ -540,7 +540,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API V2\")\n# ==========================================\n# MIDDLEWARE SETUP\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
+        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API V2\")\n# ==========================================\n# MIDDLEWARE SETUP (Need to change this!!!!)\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
         "detail": "main",
         "documentation": {}
     },
