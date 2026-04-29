@@ -14,7 +14,7 @@ from database import engine, get_db
 # Create the database tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Hawkman Auth API V2")
+app = FastAPI(title="Hawkman Auth API")
 
 # ==========================================
 # MIDDLEWARE SETUP (Need to change this!!!!)
@@ -29,7 +29,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"status": "Hawkman Auth API V2 is running smoothly!"}
+    return {"status": "Hawkman Auth API is running smoothly!"}
 
 
 # ==========================================

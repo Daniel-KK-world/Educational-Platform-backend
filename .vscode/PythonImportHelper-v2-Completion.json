@@ -486,7 +486,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API V2 is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks, # <-- Added here!\n    db: Session = Depends(get_db)",
+        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT (With OTP & Ghost Account Fix)\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks, # <-- Added here!\n    db: Session = Depends(get_db)",
         "detail": "main",
         "documentation": {}
     },
@@ -540,7 +540,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API V2\")\n# ==========================================\n# MIDDLEWARE SETUP (Need to change this!!!!)\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
+        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API\")\n# ==========================================\n# MIDDLEWARE SETUP (Need to change this!!!!)\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
         "detail": "main",
         "documentation": {}
     },
@@ -612,7 +612,7 @@
         "kind": 2,
         "importPath": "security",
         "description": "security",
-        "peekOfCode": "def verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using your secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)",
+        "peekOfCode": "def verify_password(plain_password: str, hashed_password: str) -> bool:\n    \"\"\"Checks if the typed password matches the scrambled one in the DB.\"\"\"\n    return pwd_context.verify(plain_password, hashed_password)\ndef create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)",
         "detail": "security",
         "documentation": {}
     },
@@ -621,7 +621,7 @@
         "kind": 2,
         "importPath": "security",
         "description": "security",
-        "peekOfCode": "def create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using your secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt",
+        "peekOfCode": "def create_access_token(data: dict):\n    \"\"\"Generates the JWT VIP pass for the user.\"\"\"\n    to_encode = data.copy()\n    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": expire})\n    # This creates the actual token string using secret key\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt",
         "detail": "security",
         "documentation": {}
     },
