@@ -72,6 +72,22 @@
         "documentation": {}
     },
     {
+        "label": "ForeignKey",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Float",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "context",
         "importPath": "alembic",
         "description": "alembic",
@@ -130,6 +146,14 @@
     },
     {
         "label": "Session",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "relationship",
         "importPath": "sqlalchemy.orm",
         "description": "sqlalchemy.orm",
         "isExtraImport": true,
@@ -599,7 +623,25 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    current_user.is_active = False\n    db.commit()\n    return {\"message\": \"Account deactivated successfully.\"}",
+        "peekOfCode": "def deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    current_user.is_active = False\n    db.commit()\n    return {\"message\": \"Account deactivated successfully.\"}\n# ==========================================\n# 6. UPDATE PROGRESS & STREAK (The Dashboard Engine)\n# ==========================================",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "update_user_progress",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def update_user_progress(\n    payload: schemas.ProgressUpdateCreate, \n    current_user: models.User = Depends(dependencies.get_current_user), # The Bouncer check\n    db: Session = Depends(get_db)\n):\n    # 1. Date math for the streak\n    today = datetime.now(timezone.utc).date()\n    last_active = current_user.last_activity_date.date() if current_user.last_activity_date else None\n    # 2. Calculate the Streak\n    if last_active != today:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "get_dashboard_stats",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def get_dashboard_stats(\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    # Count how many unique courses they have progress in\n    completed_count = db.query(models.UserProgress).filter(\n        models.UserProgress.user_id == current_user.id\n    ).distinct(models.UserProgress.course_id).count()\n    return {\n        \"current_streak\": current_user.current_streak,",
         "detail": "main",
         "documentation": {}
     },
@@ -617,7 +659,43 @@
         "kind": 6,
         "importPath": "models",
         "description": "models",
-        "peekOfCode": "class User(Base):\n    __tablename__ = \"users\"\n    # Core Identity\n    id = Column(Integer, primary_key=True, index=True)\n    username = Column(String, index=True)\n    email = Column(String, unique=True, index=True, nullable=False)\n    password_hash = Column(String, nullable=False)\n    # V2: Status Flags\n    is_active = Column(Boolean, default=True)  # For Soft Deletes\n    is_verified = Column(Boolean, default=False) # Flips to True after OTP success",
+        "peekOfCode": "class User(Base):\n    __tablename__ = \"users\"\n    # Core Identity\n    id = Column(Integer, primary_key=True, index=True)\n    username = Column(String, index=True)\n    email = Column(String, unique=True, index=True, nullable=False)\n    password_hash = Column(String, nullable=False)\n    # V2: Status Flags\n    is_active = Column(Boolean, default=True)  \n    is_verified = Column(Boolean, default=False) ",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Course",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Course(Base):\n    __tablename__ = \"courses\"\n    id = Column(Integer, primary_key=True, index=True)\n    title = Column(String, index=True)\n    description = Column(String)\n    # Relationship to see all progress records for a course\n    progress_records = relationship(\"UserProgress\", back_populates=\"course\")\nclass UserProgress(Base):\n    __tablename__ = \"user_progress\"\n    id = Column(Integer, primary_key=True, index=True)",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "UserProgress",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class UserProgress(Base):\n    __tablename__ = \"user_progress\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    course_id = Column(Integer, ForeignKey(\"courses.id\"))\n    progress_percent = Column(Float, default=0.0)\n    last_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())\n    # Relationships back to parents\n    user = relationship(\"User\", back_populates=\"progress\")\n    course = relationship(\"Course\", back_populates=\"progress_records\")",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Badge",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Badge(Base):\n    __tablename__ = \"badges\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, unique=True)\n    description = Column(String)\n    xp_val = Column(Integer, default=0)\nclass UserBadge(Base):\n    __tablename__ = \"user_badges\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "UserBadge",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class UserBadge(Base):\n    __tablename__ = \"user_badges\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    badge_id = Column(Integer, ForeignKey(\"badges.id\"))\n    unlocked_at = Column(DateTime(timezone=True), server_default=func.now())\n    # Relationships back to parents\n    user = relationship(\"User\", back_populates=\"badges\")\n    badge = relationship(\"Badge\")",
         "detail": "models",
         "documentation": {}
     },
@@ -663,6 +741,24 @@
         "importPath": "schemas",
         "description": "schemas",
         "peekOfCode": "class UserResponse(BaseModel):\n    id: int\n    username: str\n    email: EmailStr\n    is_active: bool\n    is_verified: bool\n    # This config tells Pydantic it's okay to read data directly \n    # from a SQLAlchemy model object.\n    class Config:\n        from_attributes = True",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "ProgressUpdateCreate",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class ProgressUpdateCreate(BaseModel):\n    user_id: int\n    course_id: int\n    progress_percent: float\nclass ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "ProgressUpdateResponse",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []",
         "detail": "schemas",
         "documentation": {}
     },

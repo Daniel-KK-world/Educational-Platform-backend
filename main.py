@@ -170,3 +170,65 @@ def deactivate_account(
     current_user.is_active = False
     db.commit()
     return {"message": "Account deactivated successfully."}
+
+# ==========================================
+# 6. UPDATE PROGRESS & STREAK (The Dashboard Engine)
+# ==========================================
+@app.post("/api/progress/update", response_model=schemas.ProgressUpdateResponse)
+def update_user_progress(
+    payload: schemas.ProgressUpdateCreate, 
+    current_user: models.User = Depends(dependencies.get_current_user), # The Bouncer check
+    db: Session = Depends(get_db)
+):
+    # 1. Date math for the streak
+    today = datetime.now(timezone.utc).date()
+    last_active = current_user.last_activity_date.date() if current_user.last_activity_date else None
+
+    # 2. Calculate the Streak
+    if last_active != today:
+        if last_active == today - timedelta(days=1):
+            # They were here yesterday! +1 to streak
+            current_user.current_streak += 1
+        else:
+            # They broke the streak, reset to 1
+            current_user.current_streak = 1
+            
+        # Update their last active time
+        current_user.last_activity_date = datetime.now(timezone.utc)
+
+    # 3. Log the Course Progress
+    # Notice we use current_user.id instead of payload.user_id for security!
+    new_progress = models.UserProgress(
+        user_id=current_user.id, 
+        course_id=payload.course_id,
+        progress_percent=payload.progress_percent
+    )
+    db.add(new_progress)
+    
+    # 4. Save everything to the database
+    db.commit()
+
+    return {
+        "success": True, 
+        "new_streak": current_user.current_streak, 
+        "badges_unlocked": []
+    }
+
+# ==========================================
+# 7. GET DASHBOARD STATS (For the Frontend UI)
+# ==========================================
+@app.get("/api/dashboard/stats")
+def get_dashboard_stats(
+    current_user: models.User = Depends(dependencies.get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Count how many unique courses they have progress in
+    completed_count = db.query(models.UserProgress).filter(
+        models.UserProgress.user_id == current_user.id
+    ).distinct(models.UserProgress.course_id).count()
+
+    return {
+        "current_streak": current_user.current_streak,
+        "completed_courses": completed_count,
+        "total_available_courses": 28 # You can query this dynamically later!
+    }

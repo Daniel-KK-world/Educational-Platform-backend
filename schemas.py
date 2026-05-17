@@ -97,3 +97,16 @@ class UserResponse(BaseModel):
     # from a SQLAlchemy model object.
     class Config:
         from_attributes = True
+        
+# ==========================================
+# PROGRESS SCHEMAS (The Dashboard Bouncers)
+# ==========================================
+class ProgressUpdateCreate(BaseModel):
+    user_id: int
+    course_id: int
+    progress_percent: float
+
+class ProgressUpdateResponse(BaseModel):
+    success: bool
+    new_streak: int
+    badges_unlocked: list[str] = []
