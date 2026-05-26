@@ -1,10 +1,43 @@
 [
     {
-        "label": "fileConfig",
-        "importPath": "logging.config",
-        "description": "logging.config",
+        "label": "Sequence",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "logging.config",
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Union",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "op",
+        "importPath": "alembic",
+        "description": "alembic",
+        "isExtraImport": true,
+        "detail": "alembic",
+        "documentation": {}
+    },
+    {
+        "label": "context",
+        "importPath": "alembic",
+        "description": "alembic",
+        "isExtraImport": true,
+        "detail": "alembic",
+        "documentation": {}
+    },
+    {
+        "label": "sqlalchemy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "detail": "sqlalchemy",
         "documentation": {}
     },
     {
@@ -88,11 +121,11 @@
         "documentation": {}
     },
     {
-        "label": "context",
-        "importPath": "alembic",
-        "description": "alembic",
+        "label": "postgresql",
+        "importPath": "sqlalchemy.dialects",
+        "description": "sqlalchemy.dialects",
         "isExtraImport": true,
-        "detail": "alembic",
+        "detail": "sqlalchemy.dialects",
         "documentation": {}
     },
     {
@@ -105,6 +138,23 @@
         "documentation": {}
     },
     {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "fileConfig",
+        "importPath": "logging.config",
+        "description": "logging.config",
+        "isExtraImport": true,
+        "detail": "logging.config",
+        "documentation": {}
+    },
+    {
         "label": "load_dotenv",
         "importPath": "dotenv",
         "description": "dotenv",
@@ -118,6 +168,63 @@
         "description": "dotenv",
         "isExtraImport": true,
         "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "engine",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "models",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "models",
+        "description": "models",
+        "detail": "models",
         "documentation": {}
     },
     {
@@ -257,53 +364,12 @@
         "documentation": {}
     },
     {
-        "label": "models",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "models",
-        "description": "models",
-        "detail": "models",
-        "documentation": {}
-    },
-    {
         "label": "security",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "security",
         "description": "security",
         "detail": "security",
-        "documentation": {}
-    },
-    {
-        "label": "get_db",
-        "importPath": "database",
-        "description": "database",
-        "isExtraImport": true,
-        "detail": "database",
-        "documentation": {}
-    },
-    {
-        "label": "engine",
-        "importPath": "database",
-        "description": "database",
-        "isExtraImport": true,
-        "detail": "database",
-        "documentation": {}
-    },
-    {
-        "label": "get_db",
-        "importPath": "database",
-        "description": "database",
-        "isExtraImport": true,
-        "detail": "database",
-        "documentation": {}
-    },
-    {
-        "label": "Base",
-        "importPath": "database",
-        "description": "database",
-        "isExtraImport": true,
-        "detail": "database",
         "documentation": {}
     },
     {
@@ -475,11 +541,29 @@
         "documentation": {}
     },
     {
+        "label": "upgrade",
+        "kind": 2,
+        "importPath": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "description": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "peekOfCode": "def upgrade() -> None:\n    \"\"\"Upgrade schema.\"\"\"\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.create_table('badges',\n    sa.Column('id', sa.Integer(), nullable=False),\n    sa.Column('name', sa.String(), nullable=True),\n    sa.Column('description', sa.String(), nullable=True),\n    sa.Column('xp_val', sa.Integer(), nullable=True),\n    sa.PrimaryKeyConstraint('id'),\n    sa.UniqueConstraint('name')",
+        "detail": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "documentation": {}
+    },
+    {
+        "label": "downgrade",
+        "kind": 2,
+        "importPath": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "description": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "peekOfCode": "def downgrade() -> None:\n    \"\"\"Downgrade schema.\"\"\"\n    # ### commands auto generated by Alembic - please adjust! ###\n    op.drop_column('users', 'last_activity_date')\n    op.drop_column('users', 'current_streak')\n    op.add_column('user_progress', sa.Column('last_active_date', sa.DATE(), autoincrement=False, nullable=True))\n    op.add_column('user_progress', sa.Column('unlocked_level', sa.INTEGER(), autoincrement=False, nullable=True))\n    op.add_column('user_progress', sa.Column('completed_days', postgresql.JSON(astext_type=sa.Text()), autoincrement=False, nullable=True))\n    op.add_column('user_progress', sa.Column('streak_count', sa.INTEGER(), autoincrement=False, nullable=True))\n    op.drop_constraint(None, 'user_progress', type_='foreignkey')",
+        "detail": "alembic.versions.6577620065af_added_lms_dashboard_and_streaks",
+        "documentation": {}
+    },
+    {
         "label": "run_migrations_offline",
         "kind": 2,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "def run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation\n    we don't even need a DBAPI to be available.\n    Calls to context.execute() here emit the given string to the\n    script output.\n    \"\"\"\n    url = config.get_main_option(\"sqlalchemy.url\")",
+        "peekOfCode": "def run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\"\"\"\n    # Pull the real database URL from the environment\n    url = os.getenv(\"DATABASE_URL\")\n    if not url:\n        raise ValueError(\"No DATABASE_URL found in environment variables\")\n    context.configure(\n        url=url,\n        target_metadata=target_metadata,\n        literal_binds=True,",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -488,7 +572,7 @@
         "kind": 2,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "def run_migrations_online() -> None:\n    \"\"\"Run migrations in 'online' mode.\n    In this scenario we need to create an Engine\n    and associate a connection with the context.\n    \"\"\"\n    connectable = engine_from_config(\n        config.get_section(config.config_ini_section, {}),\n        prefix=\"sqlalchemy.\",\n        poolclass=pool.NullPool,\n    )",
+        "peekOfCode": "def run_migrations_online() -> None:\n    \"\"\"Run migrations in 'online' mode.\"\"\"\n    # Pull the real database URL dynamically\n    database_url = os.getenv(\"DATABASE_URL\")\n    if not database_url:\n        raise ValueError(\"No DATABASE_URL found in environment variables\")\n    # Override the sqlalchemy.url setting from alembic.ini on the fly\n    configuration = config.get_section(config.config_ini_section, {})\n    configuration[\"sqlalchemy.url\"] = database_url\n    connectable = engine_from_config(",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -497,7 +581,7 @@
         "kind": 5,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "config = context.config\n# Interpret the config file for Python logging.\n# This line sets up loggers basically.\nif config.config_file_name is not None:\n    fileConfig(config.config_file_name)\n# add your model's MetaData object here\n# for 'autogenerate' support\n# from myapp import mymodel\n# target_metadata = mymodel.Base.metadata\ntarget_metadata = None",
+        "peekOfCode": "config = context.config\n# Interpret the config file for Python logging.\n# This line sets up loggers basically.\nif config.config_file_name is not None:\n    fileConfig(config.config_file_name)\n# 3. Import your Base and Models so Alembic can see the tables\nfrom database import Base\nimport models  # Imports all tables defined in models.py\ntarget_metadata = Base.metadata\ndef run_migrations_offline() -> None:",
         "detail": "alembic.env",
         "documentation": {}
     },
@@ -506,7 +590,7 @@
         "kind": 5,
         "importPath": "alembic.env",
         "description": "alembic.env",
-        "peekOfCode": "target_metadata = None\n# other values from the config, defined by the needs of env.py,\n# can be acquired:\n# my_important_option = config.get_main_option(\"my_important_option\")\n# ... etc.\ndef run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\n    This configures the context with just a URL\n    and not an Engine, though an Engine is acceptable\n    here as well.  By skipping the Engine creation",
+        "peekOfCode": "target_metadata = Base.metadata\ndef run_migrations_offline() -> None:\n    \"\"\"Run migrations in 'offline' mode.\"\"\"\n    # Pull the real database URL from the environment\n    url = os.getenv(\"DATABASE_URL\")\n    if not url:\n        raise ValueError(\"No DATABASE_URL found in environment variables\")\n    context.configure(\n        url=url,\n        target_metadata=target_metadata,",
         "detail": "alembic.env",
         "documentation": {}
     },

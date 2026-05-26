@@ -197,7 +197,7 @@ def update_user_progress(
         current_user.last_activity_date = datetime.now(timezone.utc)
 
     # 3. Log the Course Progress
-    # Notice we use current_user.id instead of payload.user_id for security!
+    # We use current_user.id instead of payload.user_id for security!
     new_progress = models.UserProgress(
         user_id=current_user.id, 
         course_id=payload.course_id,
@@ -230,5 +230,5 @@ def get_dashboard_stats(
     return {
         "current_streak": current_user.current_streak,
         "completed_courses": completed_count,
-        "total_available_courses": 28 # You can query this dynamically later!
+        "total_available_courses": 28 # No need for dynamic cos we know they'll always be 28
     }
