@@ -62,7 +62,9 @@ def register_user(
             db.commit()
             
             # Fire the email in the background!
-            background_tasks.add_task(utils.send_otp_email, email=existing_user.email, otp_code=otp_code)
+            #background_tasks.add_task(utils.send_otp_email, email=existing_user.email, #otp_code=otp_code)
+            
+            utils.send_otp_email(email=new_user.email, otp_code=otp_code)
             
             # We still return 201 so the frontend triggers the OTP screen smoothly
             return {
