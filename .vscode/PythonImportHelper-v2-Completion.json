@@ -532,12 +532,20 @@
         "documentation": {}
     },
     {
-        "label": "resend",
+        "label": "smtplib",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "resend",
-        "description": "resend",
-        "detail": "resend",
+        "importPath": "smtplib",
+        "description": "smtplib",
+        "detail": "smtplib",
+        "documentation": {}
+    },
+    {
+        "label": "EmailMessage",
+        "importPath": "email.message",
+        "description": "email.message",
+        "isExtraImport": true,
+        "detail": "email.message",
         "documentation": {}
     },
     {
@@ -923,7 +931,7 @@
         "kind": 2,
         "importPath": "utils",
         "description": "utils",
-        "peekOfCode": "def send_otp_email(email: str, otp_code: str):\n    \"\"\"\n    Sends an email using Resend. If no API key is found in the environment,\n    it safely falls back to simulating the email in the terminal.\n    \"\"\"\n    # =========================================================\n    # FEATURE FLAG: The Safety Net\n    # =========================================================\n    if not resend.api_key:\n        print(\"\\n\" + \"=\"*50)",
+        "peekOfCode": "def send_otp_email(email: str, otp_code: str):\n    \"\"\"\n    Sends an email using standard SMTP. If no SMTP credentials are found in the environment,\n    it safely falls back to simulating the email in the terminal.\n    \"\"\"\n    # =========================================================\n    # FEATURE FLAG: The Safety Net\n    # =========================================================\n    if not SMTP_EMAIL or not SMTP_APP_PASSWORD:\n        print(\"\\n\" + \"=\"*50)",
         "detail": "utils",
         "documentation": {}
     },
@@ -932,16 +940,25 @@
         "kind": 5,
         "importPath": "utils",
         "description": "utils",
-        "peekOfCode": "logger = logging.getLogger(__name__)\n# Load the key from your .env file\n# If it's not there, this just returns None and our feature flag catches it\nresend.api_key = os.getenv(\"RESEND_API_KEY\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'",
+        "peekOfCode": "logger = logging.getLogger(__name__)\n# Load the credentials from your .env file\n# If they aren't there, our feature flag catches it\nSMTP_EMAIL = os.getenv(\"SMTP_EMAIL\")\nSMTP_APP_PASSWORD = os.getenv(\"SMTP_APP_PASSWORD\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"",
         "detail": "utils",
         "documentation": {}
     },
     {
-        "label": "resend.api_key",
+        "label": "SMTP_EMAIL",
         "kind": 5,
         "importPath": "utils",
         "description": "utils",
-        "peekOfCode": "resend.api_key = os.getenv(\"RESEND_API_KEY\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp",
+        "peekOfCode": "SMTP_EMAIL = os.getenv(\"SMTP_EMAIL\")\nSMTP_APP_PASSWORD = os.getenv(\"SMTP_APP_PASSWORD\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))",
+        "detail": "utils",
+        "documentation": {}
+    },
+    {
+        "label": "SMTP_APP_PASSWORD",
+        "kind": 5,
+        "importPath": "utils",
+        "description": "utils",
+        "peekOfCode": "SMTP_APP_PASSWORD = os.getenv(\"SMTP_APP_PASSWORD\")\ndef generate_otp(length: int = 6) -> str:\n    \"\"\"\n    Generates a cryptographically secure random N-digit string.\n    We use SystemRandom instead of the standard random for bank-grade security.\n    \"\"\"\n    # string.digits is just '0123456789'\n    secure_random = random.SystemRandom()\n    otp = ''.join(secure_random.choice(string.digits) for _ in range(length))\n    return otp",
         "detail": "utils",
         "documentation": {}
     }
