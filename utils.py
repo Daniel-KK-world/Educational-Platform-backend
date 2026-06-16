@@ -31,7 +31,7 @@ def send_otp_email(email: str, otp_code: str):
         # Create the email
         msg = EmailMessage()
         msg['Subject'] = "Your Hawkman Auth Verification Code"
-        msg['From'] = "Hawkman Labs <your_email@gmail.com>" # Put your email here
+        msg['From'] = "Hawkman Labs <danielpossiblekwabi@gmail.com>"
         msg['To'] = email
         msg.set_content(f"Your verification code is: {otp_code}")
         msg.add_alternative(f"<h2>Your code: {otp_code}</h2>", subtype='html')
