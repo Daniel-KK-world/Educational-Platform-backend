@@ -725,7 +725,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_user_progress(\n    payload: schemas.ProgressUpdateCreate, \n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    today = datetime.now(timezone.utc).date()\n    last_active = current_user.last_activity_date.date() if current_user.last_activity_date else None\n    # Calculate Streak\n    if last_active != today:\n        if last_active == today - timedelta(days=1):",
+        "peekOfCode": "def update_user_progress(\n    payload: schemas.ProgressUpdateCreate, \n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    today = datetime.now(timezone.utc).date()\n    # ─── NULL-SAFE STREAK LOGIC ───\n    if current_user.last_activity_date is None:\n        # First time they've ever done anything! Day 1.\n        current_user.current_streak = 1",
         "detail": "main",
         "documentation": {}
     },

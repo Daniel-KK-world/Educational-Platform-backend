@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -162,17 +163,24 @@ def update_user_progress(
     db: Session = Depends(get_db)
 ):
     today = datetime.now(timezone.utc).date()
-    last_active = current_user.last_activity_date.date() if current_user.last_activity_date else None
-
-    # Calculate Streak
-    if last_active != today:
-        if last_active == today - timedelta(days=1):
-            current_user.current_streak += 1
-        else:
-            current_user.current_streak = 1
+    
+    # ─── NULL-SAFE STREAK LOGIC ───
+    if current_user.last_activity_date is None:
+        # First time they've ever done anything! Day 1.
+        current_user.current_streak = 1
         current_user.last_activity_date = datetime.now(timezone.utc)
+    else:
+        last_active = current_user.last_activity_date.date()
+        if last_active != today:
+            if last_active == today - timedelta(days=1):
+                # They were here yesterday! Increment streak.
+                current_user.current_streak = (current_user.current_streak or 0) + 1
+            else:
+                # They missed a day. Reset to 1.
+                current_user.current_streak = 1
+            current_user.last_activity_date = datetime.now(timezone.utc)
 
-    # UPSERT Logic: Update if exists, otherwise create
+    # ─── UPSERT PROGRESS LOGIC ───
     existing_progress = db.query(models.UserProgress).filter(
         models.UserProgress.user_id == current_user.id,
         models.UserProgress.course_id == payload.course_id
@@ -189,13 +197,23 @@ def update_user_progress(
         )
         db.add(new_progress)
     
+    # Force the database to save the updated streak on the user
+    db.add(current_user)
     db.commit()
+
+    # Dynamic badge check for the frontend toast notification
+    unlocked = []
+    streak = current_user.current_streak or 0
+    if streak == 1: unlocked.append("First Steps")
+    if streak == 5: unlocked.append("Speed Learner")
+    if streak == 7: unlocked.append("Week Warrior")
 
     return {
         "success": True, 
-        "new_streak": current_user.current_streak, 
-        "badges_unlocked": [] 
+        "new_streak": streak, 
+        "badges_unlocked": unlocked 
     }
+
 
 # ==========================================
 # 7. GET DASHBOARD STATS (Dynamically Calculated)
@@ -220,49 +238,43 @@ def get_dashboard_stats(
 
     completed_count = sum(p.progress_percent >= 100 for p in user_progress_records)
     
-    # --- DYNAMIC BADGE CALCULATION ---
-    # We calculate achievements based on existing stats instead of an empty DB table
+    # ─── DYNAMIC BADGE CALCULATION ───
     unlocked_badges = []
-    
     streak = current_user.current_streak or 0 
     
-    if streak >= 1:
-        unlocked_badges.append("First Steps")
-    if streak >= 5:
-        unlocked_badges.append("Speed Learner")
-    if streak >= 7:
-        unlocked_badges.append("Week Warrior")
-    if streak >= 10:
-        unlocked_badges.append("Finisher")
-    if completed_count >= 1:
-        unlocked_badges.append("Course Master")
+    if streak >= 1: unlocked_badges.append("First Steps")
+    if streak >= 5: unlocked_badges.append("Speed Learner")
+    if streak >= 7: unlocked_badges.append("Week Warrior")
+    if streak >= 10: unlocked_badges.append("Finisher")
+    if completed_count >= 1: unlocked_badges.append("Course Master")
         
-    # Estimate XP based on badges
     total_xp = len(unlocked_badges) * 50
 
-    # --- BASIC TIME TRACKING (Until you implement a real session logger) ---
-    # We map estimated minutes to the current day of the week
+    # ─── TIME TRACKING MATH (No DB Migration Required) ───
+    # Calculate total estimated minutes based on actual progress (1% = 1.5 mins)
+    total_progress_pct = sum(p.progress_percent for p in user_progress_records)
+    total_estimated_minutes = int(total_progress_pct * 1.5)
+    
+    # Put those minutes on today's slot in the graph if they were active today
     current_day_index = datetime.now(timezone.utc).weekday()
     weekly_minutes = [0, 0, 0, 0, 0, 0, 0]
     
-    # If they are active today, give them some estimated minutes based on their courses
     if current_user.last_activity_date and current_user.last_activity_date.date() == datetime.now(timezone.utc).date():
-        active_courses = len(user_progress_records)
-        estimated_mins = active_courses * 15 if active_courses > 0 else 10
-        weekly_minutes[current_day_index] = estimated_mins
+        # Cap the daily graph at 4 hours (240 mins) so the UI doesn't break
+        weekly_minutes[current_day_index] = min(total_estimated_minutes, 240)
 
     hours_this_week = round(sum(weekly_minutes) / 60, 1)
 
     return {
-            "streak": streak,                 
-            "best_streak": streak,             
-            "courses_enrolled": len(user_progress_records),
-            "completed_courses": completed_count,
-            "total_available_courses": 4, 
-            "course_progress": course_progress_array,
-            "badges_unlocked": unlocked_badges,
-            "total_xp": total_xp,
-            "weekly_minutes": weekly_minutes,
-            "hours_this_week": hours_this_week,
-            "recent_activity": [] 
-        }
+        "streak": streak,                 
+        "best_streak": streak,             
+        "courses_enrolled": len(user_progress_records),
+        "completed_courses": completed_count,
+        "total_available_courses": 4, 
+        "course_progress": course_progress_array,
+        "badges_unlocked": unlocked_badges,
+        "total_xp": total_xp,
+        "weekly_minutes": weekly_minutes,
+        "hours_this_week": hours_this_week,
+        "recent_activity": [] 
+    }
