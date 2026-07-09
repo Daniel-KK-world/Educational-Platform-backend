@@ -16,6 +16,22 @@
         "documentation": {}
     },
     {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "op",
         "importPath": "alembic",
         "description": "alembic",
@@ -114,6 +130,14 @@
     },
     {
         "label": "Float",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "UniqueConstraint",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
         "isExtraImport": true,
@@ -421,15 +445,6 @@
         "documentation": {}
     },
     {
-        "label": "calendar",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "calendar",
-        "description": "calendar",
-        "detail": "calendar",
-        "documentation": {}
-    },
-    {
         "label": "schemas",
         "kind": 6,
         "isExtraImport": true,
@@ -671,7 +686,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks,\n    db: Session = Depends(get_db)",
+        "peekOfCode": "def read_root():\n    return {\"status\": \"Hawkman Auth API is running smoothly!\"}\n# ==========================================\n# 1. REGISTER ENDPOINT\n# ==========================================\n@app.post(\"/api/auth/register\", status_code=status.HTTP_201_CREATED)\ndef register_user(\n    user: schemas.UserCreate,\n    background_tasks: BackgroundTasks,\n    db: Session = Depends(get_db)",
         "detail": "main",
         "documentation": {}
     },
@@ -680,7 +695,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def register_user(\n    user: schemas.UserCreate, \n    background_tasks: BackgroundTasks,\n    db: Session = Depends(get_db)\n):\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:\n        if existing_user.is_verified:\n            raise HTTPException(status_code=400, detail=\"Email already registered\")\n        else:",
+        "peekOfCode": "def register_user(\n    user: schemas.UserCreate,\n    background_tasks: BackgroundTasks,\n    db: Session = Depends(get_db)\n):\n    existing_user = db.query(models.User).filter(models.User.email == user.email).first()\n    if existing_user:\n        if existing_user.is_verified:\n            raise HTTPException(status_code=400, detail=\"Email already registered\")\n        else:",
         "detail": "main",
         "documentation": {}
     },
@@ -707,7 +722,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def get_profile(current_user: models.User = Depends(dependencies.get_current_user)):\n    return current_user\n# ==========================================\n# 5. DEACTIVATE ACCOUNT\n# ==========================================\n@app.delete(\"/api/auth/me\", status_code=status.HTTP_200_OK)\ndef deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):",
+        "peekOfCode": "def get_profile(current_user: models.User = Depends(dependencies.get_current_user)):\n    return current_user\n# ==========================================\n# 5. DEACTIVATE ACCOUNT\n# ==========================================\n@app.delete(\"/api/auth/me\", status_code=status.HTTP_200_OK)\ndef deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):",
         "detail": "main",
         "documentation": {}
     },
@@ -716,7 +731,34 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    current_user.is_active = False\n    db.commit()\n    return {\"message\": \"Account deactivated successfully.\"}\n# ==========================================\n# 6. UPDATE PROGRESS & STREAK (The Dashboard Engine)\n# ==========================================",
+        "peekOfCode": "def deactivate_account(\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    current_user.is_active = False\n    db.commit()\n    return {\"message\": \"Account deactivated successfully.\"}\n# ==========================================\n# 6. HELPER FUNCTIONS FOR PROGRESS\n# ==========================================",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "get_completed_days",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def get_completed_days(db: Session, user_id: int, course_id: int) -> List[int]:\n    records = db.query(models.DayProgress.day_id).filter(\n        models.DayProgress.user_id == user_id,\n        models.DayProgress.course_id == course_id\n    ).all()\n    return [r[0] for r in records]\ndef calculate_unlocked_level(db: Session, user_id: int, course_id: int, total_days: int) -> int:\n    completed = get_completed_days(db, user_id, course_id)\n    level = 1\n    while level in completed and level <= total_days:",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_unlocked_level",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def calculate_unlocked_level(db: Session, user_id: int, course_id: int, total_days: int) -> int:\n    completed = get_completed_days(db, user_id, course_id)\n    level = 1\n    while level in completed and level <= total_days:\n        level += 1\n    return level\n# ==========================================\n# 7. COURSE PROGRESS (Day Completion)\n# ==========================================\n@app.post(\"/api/progress/{course_id}\", response_model=schemas.CourseProgressResponse)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "update_course_progress",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def update_course_progress(\n    course_id: int,\n    payload: schemas.CourseProgressUpdate,\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    today = datetime.now(timezone.utc).date()\n    user = db.query(models.User).filter(models.User.id == current_user.id).with_for_update().first()\n    if not user:\n        raise HTTPException(status_code=404, detail=\"User not found\")",
         "detail": "main",
         "documentation": {}
     },
@@ -725,7 +767,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def update_user_progress(\n    payload: schemas.ProgressUpdateCreate, \n    current_user: models.User = Depends(dependencies.get_current_user), \n    db: Session = Depends(get_db)\n):\n    today = datetime.now(timezone.utc).date()\n    # Force the streak logic\n    if current_user.last_activity_date is None:\n        current_user.current_streak = 1\n        current_user.last_activity_date = datetime.now(timezone.utc)",
+        "peekOfCode": "def update_user_progress(\n    payload: schemas.ProgressUpdateCreate,\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    existing = db.query(models.UserProgress).filter(\n        models.UserProgress.user_id == current_user.id,\n        models.UserProgress.course_id == payload.course_id\n    ).first()\n    if existing:",
         "detail": "main",
         "documentation": {}
     },
@@ -734,7 +776,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def get_dashboard_stats(\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    # Fetch actual progress\n    user_progress_records = db.query(models.UserProgress).filter(\n        models.UserProgress.user_id == current_user.id\n    ).all()\n    course_progress_array = [\n        {",
+        "peekOfCode": "def get_dashboard_stats(\n    current_user: models.User = Depends(dependencies.get_current_user),\n    db: Session = Depends(get_db)\n):\n    user_progress_records = db.query(models.UserProgress).filter(\n        models.UserProgress.user_id == current_user.id\n    ).all()\n    course_progress_array = [\n        {\n            \"course_id\": record.course_id,",
         "detail": "main",
         "documentation": {}
     },
@@ -743,7 +785,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API\")\n# ==========================================\n# MIDDLEWARE SETUP\n# ==========================================\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"], \n    allow_credentials=True,\n    allow_methods=[\"*\"], \n    allow_headers=[\"*\"], ",
+        "peekOfCode": "app = FastAPI(title=\"Hawkman Auth API\")\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n@app.get(\"/\")\ndef read_root():",
         "detail": "main",
         "documentation": {}
     },
@@ -761,7 +803,7 @@
         "kind": 6,
         "importPath": "models",
         "description": "models",
-        "peekOfCode": "class Course(Base):\n    __tablename__ = \"courses\"\n    id = Column(Integer, primary_key=True, index=True)\n    title = Column(String, index=True)\n    description = Column(String)\n    # Relationship to see all progress records for a course\n    progress_records = relationship(\"UserProgress\", back_populates=\"course\")\nclass UserProgress(Base):\n    __tablename__ = \"user_progress\"\n    id = Column(Integer, primary_key=True, index=True)",
+        "peekOfCode": "class Course(Base):\n    __tablename__ = \"courses\"\n    id = Column(Integer, primary_key=True, index=True)\n    title = Column(String, index=True)\n    description = Column(String)\n    # Relationships\n    progress_records = relationship(\"UserProgress\", back_populates=\"course\")\n    day_progress = relationship(\"DayProgress\", back_populates=\"course\")  # NEW\nclass UserProgress(Base):\n    __tablename__ = \"user_progress\"",
         "detail": "models",
         "documentation": {}
     },
@@ -770,7 +812,16 @@
         "kind": 6,
         "importPath": "models",
         "description": "models",
-        "peekOfCode": "class UserProgress(Base):\n    __tablename__ = \"user_progress\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    course_id = Column(Integer, ForeignKey(\"courses.id\"))\n    progress_percent = Column(Float, default=0.0)\n    last_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())\n    # Relationships back to parents\n    user = relationship(\"User\", back_populates=\"progress\")\n    course = relationship(\"Course\", back_populates=\"progress_records\")",
+        "peekOfCode": "class UserProgress(Base):\n    __tablename__ = \"user_progress\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    course_id = Column(Integer, ForeignKey(\"courses.id\"))\n    progress_percent = Column(Float, default=0.0)\n    last_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())\n    user = relationship(\"User\", back_populates=\"progress\")\n    course = relationship(\"Course\", back_populates=\"progress_records\")\n# ─── NEW: Day Progress Table ───",
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "DayProgress",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class DayProgress(Base):\n    __tablename__ = \"day_progress\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    course_id = Column(Integer, ForeignKey(\"courses.id\"))\n    day_id = Column(Integer)  # The day/lesson number within the course\n    completed_at = Column(DateTime(timezone=True), server_default=func.now())\n    # Relationships\n    user = relationship(\"User\", back_populates=\"day_progress\")\n    course = relationship(\"Course\", back_populates=\"day_progress\")",
         "detail": "models",
         "documentation": {}
     },
@@ -788,7 +839,7 @@
         "kind": 6,
         "importPath": "models",
         "description": "models",
-        "peekOfCode": "class UserBadge(Base):\n    __tablename__ = \"user_badges\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    badge_id = Column(Integer, ForeignKey(\"badges.id\"))\n    unlocked_at = Column(DateTime(timezone=True), server_default=func.now())\n    # Relationships back to parents\n    user = relationship(\"User\", back_populates=\"badges\")\n    badge = relationship(\"Badge\")",
+        "peekOfCode": "class UserBadge(Base):\n    __tablename__ = \"user_badges\"\n    id = Column(Integer, primary_key=True, index=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    badge_id = Column(Integer, ForeignKey(\"badges.id\"))\n    unlocked_at = Column(DateTime(timezone=True), server_default=func.now())\n    user = relationship(\"User\", back_populates=\"badges\")\n    badge = relationship(\"Badge\")",
         "detail": "models",
         "documentation": {}
     },
@@ -797,7 +848,7 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class UserCreate(BaseModel):\n    # Username must be between 3 and 50 characters\n    username: str = Field(..., min_length=3, max_length=50)\n    # EmailStr automatically checks if it has a @ and a valid domain\n    email: EmailStr \n    # Password must be at least 8 characters and max 72 for bcrypt\n    password: str = Field(..., min_length=8, max_length=72)\n    # Custom Validator for Password Strength\n    @field_validator('password')\n    @classmethod",
+        "peekOfCode": "class UserCreate(BaseModel):\n    username: str = Field(..., min_length=3, max_length=50)\n    email: EmailStr \n    password: str = Field(..., min_length=8, max_length=72)\n    @field_validator('password')\n    @classmethod\n    def validate_password_strength(cls, value):\n        if not re.search(r'[A-Z]', value):\n            raise ValueError('Password must contain at least one uppercase letter')\n        if not re.search(r'[a-z]', value):",
         "detail": "schemas",
         "documentation": {}
     },
@@ -815,7 +866,7 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class Token(BaseModel):\n    access_token: str\n    token_type: str\n# ==========================================\n# OTP VERIFICATION SCHEMA (V2)\n# ==========================================\nclass OTPVerify(BaseModel):\n    email: EmailStr\n    # Forces the OTP to be exactly 6 characters\n    otp_code: str = Field(..., min_length=6, max_length=6) ",
+        "peekOfCode": "class Token(BaseModel):\n    access_token: str\n    token_type: str\n# ==========================================\n# OTP VERIFICATION SCHEMA\n# ==========================================\nclass OTPVerify(BaseModel):\n    email: EmailStr\n    otp_code: str = Field(..., min_length=6, max_length=6)\n# ==========================================",
         "detail": "schemas",
         "documentation": {}
     },
@@ -824,7 +875,7 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class OTPVerify(BaseModel):\n    email: EmailStr\n    # Forces the OTP to be exactly 6 characters\n    otp_code: str = Field(..., min_length=6, max_length=6) \n# ==========================================\n# USER RESPONSE SCHEMA (V2)\n# ==========================================\nclass UserResponse(BaseModel):\n    id: int\n    username: str",
+        "peekOfCode": "class OTPVerify(BaseModel):\n    email: EmailStr\n    otp_code: str = Field(..., min_length=6, max_length=6)\n# ==========================================\n# USER RESPONSE SCHEMA\n# ==========================================\nclass UserResponse(BaseModel):\n    id: int\n    username: str\n    email: EmailStr",
         "detail": "schemas",
         "documentation": {}
     },
@@ -833,7 +884,7 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class UserResponse(BaseModel):\n    id: int\n    username: str\n    email: EmailStr\n    is_active: bool\n    is_verified: bool\n    # This config tells Pydantic it's okay to read data directly \n    # from a SQLAlchemy model object.\n    class Config:\n        from_attributes = True",
+        "peekOfCode": "class UserResponse(BaseModel):\n    id: int\n    username: str\n    email: EmailStr\n    is_active: bool\n    is_verified: bool\n    class Config:\n        from_attributes = True\n# ==========================================\n# PROGRESS SCHEMAS (Dashboard)",
         "detail": "schemas",
         "documentation": {}
     },
@@ -842,7 +893,7 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class ProgressUpdateCreate(BaseModel):\n    user_id: int\n    course_id: int\n    progress_percent: float\nclass ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []",
+        "peekOfCode": "class ProgressUpdateCreate(BaseModel):\n    user_id: int\n    course_id: int\n    progress_percent: float\nclass ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []\n# ==========================================\n# COURSE PROGRESS SCHEMAS (NEW - For Day Completion)",
         "detail": "schemas",
         "documentation": {}
     },
@@ -851,7 +902,25 @@
         "kind": 6,
         "importPath": "schemas",
         "description": "schemas",
-        "peekOfCode": "class ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []",
+        "peekOfCode": "class ProgressUpdateResponse(BaseModel):\n    success: bool\n    new_streak: int\n    badges_unlocked: list[str] = []\n# ==========================================\n# COURSE PROGRESS SCHEMAS (NEW - For Day Completion)\n# ==========================================\nclass CourseProgressUpdate(BaseModel):\n    \"\"\"Sent from frontend when a user completes a day/lesson.\"\"\"\n    completed_day: int",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CourseProgressUpdate",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class CourseProgressUpdate(BaseModel):\n    \"\"\"Sent from frontend when a user completes a day/lesson.\"\"\"\n    completed_day: int\nclass CourseProgressResponse(BaseModel):\n    \"\"\"Returned from backend after processing a day completion.\"\"\"\n    streak_count: int\n    total_xp: int\n    unlocked_level: int\n    completed_days: List[int]   # List of day IDs the user has completed",
+        "detail": "schemas",
+        "documentation": {}
+    },
+    {
+        "label": "CourseProgressResponse",
+        "kind": 6,
+        "importPath": "schemas",
+        "description": "schemas",
+        "peekOfCode": "class CourseProgressResponse(BaseModel):\n    \"\"\"Returned from backend after processing a day completion.\"\"\"\n    streak_count: int\n    total_xp: int\n    unlocked_level: int\n    completed_days: List[int]   # List of day IDs the user has completed",
         "detail": "schemas",
         "documentation": {}
     },
