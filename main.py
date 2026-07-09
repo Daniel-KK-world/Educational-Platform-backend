@@ -143,6 +143,11 @@ def get_profile(current_user: models.User = Depends(dependencies.get_current_use
 # ==========================================
 # 5. DEACTIVATE ACCOUNT
 # ==========================================
+
+
+# ==========================================
+# 6. UPDATE USER PROGRESS STREAK LOGIC
+# ==========================================
 @app.delete("/api/auth/me", status_code=status.HTTP_200_OK)
 def deactivate_account(
     current_user: models.User = Depends(dependencies.get_current_user), 
@@ -153,9 +158,6 @@ def deactivate_account(
     return {"message": "Account deactivated successfully."}
 
 
-# ==========================================
-# 6. UPDATE PROGRESS & STREAK (The Dashboard Engine)
-# ==========================================
 @app.post("/api/progress/update", response_model=schemas.ProgressUpdateResponse)
 def update_user_progress(
     payload: schemas.ProgressUpdateCreate, 
@@ -164,27 +166,35 @@ def update_user_progress(
 ):
     today = datetime.now(timezone.utc).date()
     
-    # ─── NULL-SAFE STREAK LOGIC ───
-    if current_user.last_activity_date is None:
-        # First time they've ever done anything! Day 1.
+    # Lock the user row to prevent race conditions
+    current_user = db.query(models.User).filter(
+        models.User.id == current_user.id
+    ).with_for_update().first()
+    
+    # Check if the user already updated today
+    last_active_date = current_user.last_activity_date.date() if current_user.last_activity_date else None
+    
+    if last_active_date is None:
+        # First ever activity
         current_user.current_streak = 1
         current_user.last_activity_date = datetime.now(timezone.utc)
+    elif last_active_date == today:
+        # Already updated today - don't change streak
+        pass  # Keep streak as is
+    elif last_active_date == today - timedelta(days=1):
+        # Consecutive day
+        current_user.current_streak = (current_user.current_streak or 0) + 1
+        current_user.last_activity_date = datetime.now(timezone.utc)
     else:
-        last_active = current_user.last_activity_date.date()
-        if last_active != today:
-            if last_active == today - timedelta(days=1):
-                # They were here yesterday! Increment streak.
-                current_user.current_streak = (current_user.current_streak or 0) + 1
-            else:
-                # They missed a day. Reset to 1.
-                current_user.current_streak = 1
-            current_user.last_activity_date = datetime.now(timezone.utc)
-
-    # ─── UPSERT PROGRESS LOGIC ───
+        # Gap found - reset
+        current_user.current_streak = 1
+        current_user.last_activity_date = datetime.now(timezone.utc)
+    
+    # ─── UPSERT PROGRESS ───
     existing_progress = db.query(models.UserProgress).filter(
         models.UserProgress.user_id == current_user.id,
         models.UserProgress.course_id == payload.course_id
-    ).first()
+    ).with_for_update().first()
 
     if existing_progress:
         existing_progress.progress_percent = payload.progress_percent
@@ -197,21 +207,14 @@ def update_user_progress(
         )
         db.add(new_progress)
     
-    # Force the database to save the updated streak on the user
-    db.add(current_user)
     db.commit()
-
-    # Dynamic badge check for the frontend toast notification
-    unlocked = []
-    streak = current_user.current_streak or 0
-    if streak == 1: unlocked.append("First Steps")
-    if streak == 5: unlocked.append("Speed Learner")
-    if streak == 7: unlocked.append("Week Warrior")
-
+    db.refresh(current_user)
+    
+    # Your original return (no badge function)
     return {
         "success": True, 
-        "new_streak": streak, 
-        "badges_unlocked": unlocked 
+        "new_streak": current_user.current_streak, 
+        "badges_unlocked": [] 
     }
 
 
