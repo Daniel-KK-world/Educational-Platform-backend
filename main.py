@@ -292,11 +292,66 @@ def get_dashboard_stats(
     # Badges
     unlocked_badges = []
     streak = current_user.current_streak or 0
-    if streak >= 1: unlocked_badges.append("First Steps")
-    if streak >= 5: unlocked_badges.append("Speed Learner")
-    if streak >= 7: unlocked_badges.append("Week Warrior")
-    if streak >= 10: unlocked_badges.append("Finisher")
-    if completed_courses >= 1: unlocked_badges.append("Course Master")
+
+    # Streak-based badges
+    if streak >= 1:
+        unlocked_badges.append({
+            "name": "First Steps",
+            "tier": "bronze",
+            "color": "#CD7F32",
+            "icon": "🥉",
+            "requirement": "1 day streak"
+        })
+    if streak >= 5:
+        unlocked_badges.append({
+            "name": "Speed Learner",
+            "tier": "silver",
+            "color": "#C0C0C0",
+            "icon": "🥈",
+            "requirement": "5 day streak"
+        })
+    if streak >= 7:
+        unlocked_badges.append({
+            "name": "Week Warrior",
+            "tier": "gold",
+            "color": "#FFD700",
+            "icon": "🥇",
+            "requirement": "7 day streak"
+        })
+    if streak >= 10:
+        unlocked_badges.append({
+            "name": "Finisher",
+            "tier": "platinum",
+            "color": "#E5E4E2",
+            "icon": "💎",
+            "requirement": "10 day streak"
+        })
+
+    # Course-based badges
+    if completed_courses >= 1:
+        unlocked_badges.append({
+            "name": "Course Master",
+            "tier": "diamond",
+            "color": "#B9F2FF",
+            "icon": "👑",
+            "requirement": "1 course completed"
+        })
+    if completed_courses >= 3:
+        unlocked_badges.append({
+            "name": "Learning Legend",
+            "tier": "diamond",
+            "color": "#B9F2FF",
+            "icon": "👑",
+            "requirement": "3 courses completed"
+        })
+    if completed_courses >= 5:
+        unlocked_badges.append({
+            "name": "AI Scholar",
+            "tier": "diamond",
+            "color": "#B9F2FF",
+            "icon": "👑",
+            "requirement": "5 courses completed"
+        })
 
     total_xp = current_user.total_xp or 0
 
