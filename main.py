@@ -24,6 +24,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ==========================================
+# LEAD MAGNET CONFIG
+# ==========================================
+LEVEL_MAP = {
+    "BEGINNER": {
+        "magnet": "Education_Starter_Pack",
+        "file_path": "assets/lead_magnets/Education_Starter_Pack.pdf",
+        "subject": "Your Education Starter Pack is here!",
+    },
+    "ADVANCED": {
+        "magnet": "Education_Deeper_Pack",
+        "file_path": "assets/lead_magnets/Education_Deeper_Pack.pdf",
+        "subject": "Your Education Deeper Pack is here!",
+    },
+}
+
+
 @app.get("/")
 def read_root():
     return {"status": "Hawkman Auth API is running smoothly!"}
@@ -377,3 +394,81 @@ def get_dashboard_stats(
         "hours_this_week": hours_this_week,
         "recent_activity": []
     }
+
+
+# ==========================================
+# 10. PUBLIC LEAD OPT-IN ENDPOINT
+# ==========================================
+@app.post("/api/opt-in", status_code=status.HTTP_201_CREATED)
+def submit_opt_in(
+    payload: schemas.LeadOptInCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    # 1. Map Experience Level to Lead Magnet
+    mapping = LEVEL_MAP[payload.experience_level.value]
+
+    # 2. Check if Lead already exists by email (Upsert pattern)
+    lead = db.query(models.Lead).filter(models.Lead.email == payload.email).first()
+    if not lead:
+        lead = models.Lead(
+            name=payload.name,
+            email=payload.email,
+            organization=payload.organization
+        )
+        db.add(lead)
+        db.commit()
+        db.refresh(lead)
+    else:
+        # Update organization/name if they updated it
+        lead.organization = payload.organization
+        lead.name = payload.name
+        db.commit()
+
+    # 3. Create or fetch the delivery record for this specific pack
+    delivery = db.query(models.LeadDelivery).filter(
+        models.LeadDelivery.lead_id == lead.id,
+        models.LeadDelivery.lead_magnet == mapping["magnet"]
+    ).first()
+
+    if not delivery:
+        delivery = models.LeadDelivery(
+            lead_id=lead.id,
+            experience_level=payload.experience_level.value,
+            lead_magnet=mapping["magnet"],
+            delivery_status="PENDING"
+        )
+        db.add(delivery)
+        db.commit()
+        db.refresh(delivery)
+
+    # 4. Queue background task to send the PDF via Resend
+    background_tasks.add_task(
+        utils.send_lead_magnet_email,
+        delivery_id=delivery.id,
+        email=lead.email,
+        name=lead.name,
+        mapping=mapping,
+    )
+
+    return {
+        "message": f"Successfully opted in! Your {mapping['magnet']} is on its way to your email.",
+        "lead_magnet": mapping["magnet"],
+        "delivery_id": delivery.id,
+        "status": delivery.delivery_status
+    }
+
+
+# ==========================================
+# 11. COMPANY / ADMIN LEADS ENDPOINT
+# ==========================================
+@app.get("/api/admin/leads", response_model=list[schemas.LeadWithDeliveriesResponse])
+def get_all_leads(
+    skip: int = 0,
+    limit: int = 50,
+    #current_user: models.User = Depends(dependencies.get_current_user),  # Or your admin dependency check
+    db: Session = Depends(get_db)
+):
+    """Secure route for the company/dashboard to access captured leads, organizations, and history."""
+    leads = db.query(models.Lead).offset(skip).limit(limit).all()
+    return leads

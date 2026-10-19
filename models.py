@@ -103,3 +103,43 @@ class UserBadge(Base):
 
     user = relationship("User", back_populates="badges")
     badge = relationship("Badge")
+    
+    
+# ─── OPT IN FORM MODELS  ───
+
+class Lead(Base):
+    __tablename__ = "leads"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(120), nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    organization = Column(String(150), index=True, nullable=False)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+
+    # Relationship to deliveries
+    deliveries = relationship("LeadDelivery", back_populates="lead", cascade="all, delete-orphan")
+
+
+class LeadDelivery(Base):
+    __tablename__ = "lead_deliveries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    lead_id = Column(Integer, ForeignKey("leads.id", ondelete="CASCADE"), nullable=False, index=True)
+    
+    experience_level = Column(String(50), nullable=False)  # "BEGINNER" or "ADVANCED"
+    lead_magnet = Column(String(100), nullable=False, index=True)  # "Education_Starter_Pack" or "Education_Deeper_Pack"
+    delivery_status = Column(String(50), default="PENDING", nullable=False, index=True)  # PENDING, SENT, FAILED
+    
+    error_message = Column(String, nullable=True)
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    lead = relationship("Lead", back_populates="deliveries")
+
+    __table_args__ = (
+        UniqueConstraint("lead_id", "lead_magnet", name="uq_lead_magnet_per_user"),
+    )
+    
+    

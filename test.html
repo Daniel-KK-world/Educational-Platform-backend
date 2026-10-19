@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Magnet Opt-In Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen py-10 px-4">
+
+    <div class="max-w-2xl mx-auto space-y-6">
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- CARD 1: OPT-IN FORM                     -->
+        <!-- ══════════════════════════════════════ -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                <span class="text-xs font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 py-1 px-3 rounded-full border border-emerald-500/20">
+                    Lead Magnet Test
+                </span>
+                <h1 class="text-2xl font-bold mt-3 tracking-tight">Get Your Education Pack</h1>
+                <p class="text-sm text-gray-400 mt-1">Choose your experience level to receive the matching pack instantly.</p>
+            </div>
+
+            <form id="optInForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1">Full Name</label>
+                    <input type="text" id="name" required
+                        class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-emerald-500 transition-colors"
+                        placeholder="Ama Mensah">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1">Email Address</label>
+                    <input type="email" id="email" required
+                        class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-emerald-500 transition-colors"
+                        placeholder="ama@organization.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1">Organization</label>
+                    <input type="text" id="organization" required
+                        class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-emerald-500 transition-colors"
+                        placeholder="TechCorp Ltd">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1">Experience Level</label>
+                    <select id="experience_level" required
+                        class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-emerald-500 transition-colors">
+                        <option value="BEGINNER">Beginner (Education Starter Pack)</option>
+                        <option value="ADVANCED">Advanced (Education Deeper Pack)</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitBtn"
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-emerald-900/20 mt-2">
+                    Get Pack Now
+                </button>
+            </form>
+
+            <div id="responseMessage" class="hidden mt-6 p-4 rounded-lg text-sm text-center"></div>
+        </div>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- CARD 2: ADMIN LEADS VIEWER (NO AUTH)    -->
+        <!-- ══════════════════════════════════════ -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
+            <div class="mb-6">
+                <span class="text-xs font-semibold tracking-wider uppercase bg-sky-500/10 text-sky-400 py-1 px-3 rounded-full border border-sky-500/20">
+                    Admin Data Viewer
+                </span>
+                <h2 class="text-xl font-bold mt-3 tracking-tight">Captured Leads</h2>
+                <p class="text-sm text-gray-400 mt-1">Fetching directly from the open endpoint.</p>
+            </div>
+
+            <div class="space-y-4">
+                <button id="fetchLeadsBtn"
+                    class="w-full bg-sky-600 hover:bg-sky-500 text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-sky-900/20">
+                    Fetch Leads
+                </button>
+            </div>
+
+            <div id="leadsMessage" class="hidden mt-4 p-4 rounded-lg text-sm"></div>
+
+            <div id="leadsContainer" class="hidden mt-6 space-y-3"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:8000";
+
+        // ══════════════════════════════════════
+        // OPT-IN FORM HANDLER
+        // ══════════════════════════════════════
+        document.getElementById('optInForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const msgBox = document.getElementById('responseMessage');
+
+            const payload = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                organization: document.getElementById('organization').value,
+                experience_level: document.getElementById('experience_level').value
+            };
+
+            btn.disabled = true;
+            btn.textContent = "Processing...";
+            msgBox.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/opt-in`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+                    msgBox.textContent = data.message;
+                    document.getElementById('optInForm').reset();
+                } else {
+                    msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                    msgBox.textContent = data.detail || "Something went wrong.";
+                }
+            } catch (err) {
+                msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                msgBox.textContent = "Unable to connect to the backend server.";
+            } finally {
+                msgBox.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = "Get Pack Now";
+            }
+        });
+
+        // ══════════════════════════════════════
+        // ADMIN LEADS FETCHER
+        // ══════════════════════════════════════
+        document.getElementById('fetchLeadsBtn').addEventListener('click', async function () {
+            const btn = this;
+            const msgBox = document.getElementById('leadsMessage');
+            const container = document.getElementById('leadsContainer');
+
+            container.classList.add('hidden');
+            container.innerHTML = '';
+
+            btn.disabled = true;
+            btn.textContent = "Loading...";
+            msgBox.classList.add('hidden');
+
+            try {
+                // No headers, just a straight GET request
+                const response = await fetch(`${API_BASE}/api/admin/leads?skip=0&limit=50`);
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                    msgBox.textContent = err.detail || `HTTP ${response.status}`;
+                    msgBox.classList.remove('hidden');
+                    return;
+                }
+
+                const leads = await response.json();
+
+                if (leads.length === 0) {
+                    msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-gray-800/50 border border-gray-700 text-gray-400";
+                    msgBox.textContent = "No leads captured yet.";
+                    msgBox.classList.remove('hidden');
+                    return;
+                }
+
+                msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+                msgBox.textContent = `Loaded ${leads.length} lead${leads.length > 1 ? 's' : ''}.`;
+                msgBox.classList.remove('hidden');
+
+                leads.forEach(lead => {
+                    const card = document.createElement('div');
+                    card.className = "bg-gray-950 border border-gray-800 rounded-lg p-4";
+
+                    const deliveriesHtml = (lead.deliveries || []).map(d => `
+                        <div class="flex items-center justify-between gap-2 mt-2 pl-3 border-l-2 ${
+                            d.delivery_status === 'SENT'   ? 'border-emerald-500' :
+                            d.delivery_status === 'FAILED' ? 'border-rose-500'    :
+                                                             'border-yellow-500'
+                        }">
+                            <div class="text-xs">
+                                <span class="text-gray-300 font-medium">${d.lead_magnet}</span>
+                                <span class="text-gray-500"> · ${d.experience_level}</span>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                                d.delivery_status === 'SENT'   ? 'bg-emerald-500/10 text-emerald-400' :
+                                d.delivery_status === 'FAILED' ? 'bg-rose-500/10 text-rose-400'       :
+                                                                 'bg-yellow-500/10 text-yellow-400'
+                            }">${d.delivery_status}</span>
+                        </div>
+                        ${d.error_message ? `<p class="text-[10px] text-rose-400 mt-1 pl-3">${d.error_message}</p>` : ''}
+                    `).join('');
+
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <p class="font-semibold text-gray-100">${lead.name}</p>
+                                <p class="text-xs text-gray-400">${lead.email}</p>
+                                <p class="text-xs text-sky-400 mt-0.5">${lead.organization}</p>
+                            </div>
+                            <span class="text-[10px] text-gray-500 whitespace-nowrap">#${lead.id}</span>
+                        </div>
+                        ${deliveriesHtml || '<p class="text-xs text-gray-500 mt-2">No deliveries yet.</p>'}
+                    `;
+                    container.appendChild(card);
+                });
+
+                container.classList.remove('hidden');
+
+            } catch (err) {
+                msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                msgBox.textContent = "Request failed: " + err.message;
+                msgBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Fetch Leads";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
+from datetime import datetime
 from typing import List
 import re
+import enum 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 # ==========================================
@@ -106,3 +108,41 @@ class CourseProgressResponse(BaseModel):
     total_xp: int
     unlocked_level: int
     completed_days: List[int]   # List of day IDs the user has completed
+    
+class ExperienceLevelEnum(str, enum.Enum):
+    BEGINNER = "BEGINNER"
+    ADVANCED = "ADVANCED"
+
+class LeadOptInCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=120)
+    email: EmailStr
+    organization: str = Field(..., min_length=2, max_length=150)
+    experience_level: ExperienceLevelEnum
+
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+class LeadDeliveryRead(BaseModel):
+    id: int
+    experience_level: str
+    lead_magnet: str
+    delivery_status: str
+    error_message: str | None
+    sent_at: datetime | None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class LeadWithDeliveriesResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    organization: str
+    created_at: datetime
+    deliveries: List[LeadDeliveryRead] = []
+
+    class Config:
+        from_attributes = True
