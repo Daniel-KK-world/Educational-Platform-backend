@@ -62,7 +62,7 @@
         </div>
 
         <!-- ══════════════════════════════════════ -->
-        <!-- CARD 2: ADMIN LEADS VIEWER (NO AUTH)    -->
+        <!-- CARD 2: ADMIN LEADS VIEWER (AUTH)       -->
         <!-- ══════════════════════════════════════ -->
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
             <div class="mb-6">
@@ -70,10 +70,16 @@
                     Admin Data Viewer
                 </span>
                 <h2 class="text-xl font-bold mt-3 tracking-tight">Captured Leads</h2>
-                <p class="text-sm text-gray-400 mt-1">Fetching directly from the open endpoint.</p>
+                <p class="text-sm text-gray-400 mt-1">Requires a Bearer token. Get one from <code class="text-sky-400">POST /api/auth/login</code> in Swagger.</p>
             </div>
 
             <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1">Bearer Token</label>
+                    <input type="text" id="authToken"
+                        class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-sky-500 transition-colors font-mono"
+                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                </div>
                 <button id="fetchLeadsBtn"
                     class="w-full bg-sky-600 hover:bg-sky-500 text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-sky-900/20">
                     Fetch Leads
@@ -140,19 +146,30 @@
         // ══════════════════════════════════════
         document.getElementById('fetchLeadsBtn').addEventListener('click', async function () {
             const btn = this;
+            const token = document.getElementById('authToken').value.trim();
             const msgBox = document.getElementById('leadsMessage');
             const container = document.getElementById('leadsContainer');
 
             container.classList.add('hidden');
             container.innerHTML = '';
 
+            // Check if token exists
+            if (!token) {
+                msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                msgBox.textContent = "Paste a Bearer token first (login via /api/auth/login).";
+                msgBox.classList.remove('hidden');
+                return;
+            }
+
             btn.disabled = true;
             btn.textContent = "Loading...";
             msgBox.classList.add('hidden');
 
             try {
-                // No headers, just a straight GET request
-                const response = await fetch(`${API_BASE}/api/admin/leads?skip=0&limit=50`);
+                // Send token in Authorization header
+                const response = await fetch(`${API_BASE}/api/admin/leads?skip=0&limit=50`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
 
                 if (!response.ok) {
                     const err = await response.json().catch(() => ({}));

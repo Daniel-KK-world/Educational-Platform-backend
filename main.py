@@ -466,9 +466,9 @@ def submit_opt_in(
 def get_all_leads(
     skip: int = 0,
     limit: int = 50,
-    #current_user: models.User = Depends(dependencies.get_current_user),  # Or your admin dependency check
+    current_user: models.User = Depends(dependencies.get_current_user),  # Or your admin dependency check
     db: Session = Depends(get_db)
 ):
     """Secure route for the company/dashboard to access captured leads, organizations, and history."""
     leads = db.query(models.Lead).offset(skip).limit(limit).all()
-    return leads
+    return leads    
