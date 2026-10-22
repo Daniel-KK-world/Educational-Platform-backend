@@ -1,8 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
+from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
 from typing import List
+import httpx # <--- NEW: For Cloudflare Turnstile verification
+
+# --- Rate Limiting Imports ---
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # V2 File Imports
 import models
@@ -15,6 +21,11 @@ from database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Hawkman Auth API")
+
+# --- Rate Limiter Setup ---
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -128,7 +139,12 @@ def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
 # 3. LOGIN ENDPOINT
 # ==========================================
 @app.post("/api/auth/login", response_model=schemas.Token)
-def login_user(user_credentials: schemas.UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def login_user(
+    request: Request, 
+    user_credentials: schemas.UserLogin, 
+    db: Session = Depends(get_db)
+):
     user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
 
     if not user or not security.verify_password(user_credentials.password, user.password_hash):
@@ -400,15 +416,37 @@ def get_dashboard_stats(
 # 10. PUBLIC LEAD OPT-IN ENDPOINT
 # ==========================================
 @app.post("/api/opt-in", status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
 def submit_opt_in(
+    request: Request, 
     payload: schemas.LeadOptInCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    # 1. Map Experience Level to Lead Magnet
+    # 1. VERIFY CLOUDFLARE TURNSTILE TOKEN
+    # Note: We are using Cloudflare's official test secret which always passes.
+    # Replace this with os.getenv("TURNSTILE_SECRET_KEY") in production!
+    turnstile_secret = "1x0000000000000000000000000000000AA" 
+    
+    with httpx.Client() as client:
+        turnstile_res = client.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data={
+                "secret": turnstile_secret,
+                "response": payload.cf_turnstile_response,
+            },
+        )
+        
+        if not turnstile_res.json().get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="Bot verification failed. Please try again."
+            )
+
+    # 2. Map Experience Level to Lead Magnet
     mapping = LEVEL_MAP[payload.experience_level.value]
 
-    # 2. Check if Lead already exists by email (Upsert pattern)
+    # 3. Check if Lead already exists by email (Upsert pattern)
     lead = db.query(models.Lead).filter(models.Lead.email == payload.email).first()
     if not lead:
         lead = models.Lead(
@@ -425,7 +463,7 @@ def submit_opt_in(
         lead.name = payload.name
         db.commit()
 
-    # 3. Create or fetch the delivery record for this specific pack
+    # 4. Create or fetch the delivery record for this specific pack
     delivery = db.query(models.LeadDelivery).filter(
         models.LeadDelivery.lead_id == lead.id,
         models.LeadDelivery.lead_magnet == mapping["magnet"]
@@ -442,7 +480,7 @@ def submit_opt_in(
         db.commit()
         db.refresh(delivery)
 
-    # 4. Queue background task to send the PDF via Resend
+    # 5. Queue background task to send the PDF via Resend
     background_tasks.add_task(
         utils.send_lead_magnet_email,
         delivery_id=delivery.id,
@@ -466,9 +504,9 @@ def submit_opt_in(
 def get_all_leads(
     skip: int = 0,
     limit: int = 50,
-    current_user: models.User = Depends(dependencies.get_current_user),  # Or your admin dependency check
+    current_user: models.User = Depends(dependencies.get_current_user),
     db: Session = Depends(get_db)
 ):
     """Secure route for the company/dashboard to access captured leads, organizations, and history."""
     leads = db.query(models.Lead).offset(skip).limit(limit).all()
-    return leads    
+    return leads

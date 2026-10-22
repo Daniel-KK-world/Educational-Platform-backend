@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Magnet Opt-In Test</title>
+    <title>Lead Magnet Opt-In Test (Turnstile Protected)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: 'class' };
     </script>
+    <!-- Cloudflare Turnstile Script -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen py-10 px-4">
 
     <div class="max-w-2xl mx-auto space-y-6">
 
-        <!-- ══════════════════════════════════════ -->
-        <!-- CARD 1: OPT-IN FORM                     -->
-        <!-- ══════════════════════════════════════ -->
+        <!-- CARD 1: OPT-IN FORM -->
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
             <div class="text-center mb-8">
                 <span class="text-xs font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 py-1 px-3 rounded-full border border-emerald-500/20">
@@ -52,8 +52,17 @@
                         <option value="ADVANCED">Advanced (Education Deeper Pack)</option>
                     </select>
                 </div>
-                <button type="submit" id="submitBtn"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-emerald-900/20 mt-2">
+                
+                <!-- Cloudflare Turnstile Widget -->
+                <!-- Replace the data-sitekey below with your real one later -->
+                <div class="cf-turnstile" 
+                     data-sitekey="1x00000000000000000000AA" 
+                     data-callback="enableSubmitBtn">
+                </div>
+
+                <!-- Button is initially disabled until Turnstile passes -->
+                <button type="submit" id="submitBtn" disabled
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-emerald-900/20 mt-2">
                     Get Pack Now
                 </button>
             </form>
@@ -61,9 +70,7 @@
             <div id="responseMessage" class="hidden mt-6 p-4 rounded-lg text-sm text-center"></div>
         </div>
 
-        <!-- ══════════════════════════════════════ -->
-        <!-- CARD 2: ADMIN LEADS VIEWER (AUTH)       -->
-        <!-- ══════════════════════════════════════ -->
+        <!-- CARD 2: ADMIN VIEWER (Unchanged) -->
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
             <div class="mb-6">
                 <span class="text-xs font-semibold tracking-wider uppercase bg-sky-500/10 text-sky-400 py-1 px-3 rounded-full border border-sky-500/20">
@@ -87,7 +94,6 @@
             </div>
 
             <div id="leadsMessage" class="hidden mt-4 p-4 rounded-lg text-sm"></div>
-
             <div id="leadsContainer" class="hidden mt-6 space-y-3"></div>
         </div>
     </div>
@@ -95,20 +101,36 @@
     <script>
         const API_BASE = "http://localhost:8000";
 
-        // ══════════════════════════════════════
+        // Enable submit button after Turnstile passes
+        function enableSubmitBtn() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.textContent = "Get Pack Now";
+        }
+
         // OPT-IN FORM HANDLER
-        // ══════════════════════════════════════
         document.getElementById('optInForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const btn = document.getElementById('submitBtn');
             const msgBox = document.getElementById('responseMessage');
 
+            // Grab the Turnstile token from the hidden input injected by Cloudflare
+            const turnstileToken = document.querySelector('[name="cf-turnstile-response"]').value;
+
+            if (!turnstileToken) {
+                msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                msgBox.textContent = "Please complete the bot verification.";
+                msgBox.classList.remove('hidden');
+                return;
+            }
+
             const payload = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 organization: document.getElementById('organization').value,
-                experience_level: document.getElementById('experience_level').value
+                experience_level: document.getElementById('experience_level').value,
+                cf_turnstile_response: turnstileToken // Send to backend
             };
 
             btn.disabled = true;
@@ -127,23 +149,26 @@
                     msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
                     msgBox.textContent = data.message;
                     document.getElementById('optInForm').reset();
+                    // Re-disable button because the form reset clears Turnstile
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('submitBtn').textContent = "Get Pack Now";
                 } else {
                     msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-rose-500/10 border border-rose-500/20 text-rose-400";
                     msgBox.textContent = data.detail || "Something went wrong.";
+                    btn.disabled = false;
+                    btn.textContent = "Get Pack Now";
                 }
             } catch (err) {
                 msgBox.className = "mt-6 p-4 rounded-lg text-sm text-center bg-rose-500/10 border border-rose-500/20 text-rose-400";
                 msgBox.textContent = "Unable to connect to the backend server.";
-            } finally {
-                msgBox.classList.remove('hidden');
                 btn.disabled = false;
                 btn.textContent = "Get Pack Now";
+            } finally {
+                msgBox.classList.remove('hidden');
             }
         });
 
-        // ══════════════════════════════════════
-        // ADMIN LEADS FETCHER
-        // ══════════════════════════════════════
+        // ADMIN LEADS FETCHER (Unchanged)
         document.getElementById('fetchLeadsBtn').addEventListener('click', async function () {
             const btn = this;
             const token = document.getElementById('authToken').value.trim();
@@ -153,7 +178,6 @@
             container.classList.add('hidden');
             container.innerHTML = '';
 
-            // Check if token exists
             if (!token) {
                 msgBox.className = "mt-4 p-4 rounded-lg text-sm bg-rose-500/10 border border-rose-500/20 text-rose-400";
                 msgBox.textContent = "Paste a Bearer token first (login via /api/auth/login).";
@@ -166,7 +190,6 @@
             msgBox.classList.add('hidden');
 
             try {
-                // Send token in Authorization header
                 const response = await fetch(`${API_BASE}/api/admin/leads?skip=0&limit=50`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });

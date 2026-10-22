@@ -118,6 +118,7 @@ class LeadOptInCreate(BaseModel):
     email: EmailStr
     organization: str = Field(..., min_length=2, max_length=150)
     experience_level: ExperienceLevelEnum
+    cf_turnstile_response: str 
 
     @field_validator('email')
     @classmethod
