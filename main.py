@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta, timezone
 from typing import List
-import httpx # <--- NEW: For Cloudflare Turnstile verification
+import httpx
 
 # --- Rate Limiting Imports ---
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -141,8 +142,8 @@ def verify_otp(payload: schemas.OTPVerify, db: Session = Depends(get_db)):
 @app.post("/api/auth/login", response_model=schemas.Token)
 @limiter.limit("5/minute")
 def login_user(
-    request: Request, 
-    user_credentials: schemas.UserLogin, 
+    request: Request,
+    user_credentials: schemas.UserLogin,
     db: Session = Depends(get_db)
 ):
     user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
@@ -253,8 +254,6 @@ def update_course_progress(
         db.commit()
         db.refresh(user)
 
-    # You should fetch total_days from the courses table or a config.
-    # Hardcoded 28 for now – replace with real data.
     total_days = 28
     unlocked_level = calculate_unlocked_level(db, user.id, course_id, total_days)
     completed_days = get_completed_days(db, user.id, course_id)
@@ -418,7 +417,7 @@ def get_dashboard_stats(
 @app.post("/api/opt-in", status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
 def submit_opt_in(
-    request: Request, 
+    request: Request,
     payload: schemas.LeadOptInCreate,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
@@ -426,8 +425,8 @@ def submit_opt_in(
     # 1. VERIFY CLOUDFLARE TURNSTILE TOKEN
     # Note: We are using Cloudflare's official test secret which always passes.
     # Replace this with os.getenv("TURNSTILE_SECRET_KEY") in production!
-    turnstile_secret = "1x0000000000000000000000000000000AA" 
-    
+    turnstile_secret = "1x0000000000000000000000000000000AA"
+
     with httpx.Client() as client:
         turnstile_res = client.post(
             "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -436,10 +435,10 @@ def submit_opt_in(
                 "response": payload.cf_turnstile_response,
             },
         )
-        
+
         if not turnstile_res.json().get("success"):
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Bot verification failed. Please try again."
             )
 
@@ -458,7 +457,6 @@ def submit_opt_in(
         db.commit()
         db.refresh(lead)
     else:
-        # Update organization/name if they updated it
         lead.organization = payload.organization
         lead.name = payload.name
         db.commit()
@@ -504,9 +502,69 @@ def submit_opt_in(
 def get_all_leads(
     skip: int = 0,
     limit: int = 50,
-    current_user: models.User = Depends(dependencies.get_current_user),
+    current_user: models.User = Depends(dependencies.get_current_admin),
     db: Session = Depends(get_db)
 ):
     """Secure route for the company/dashboard to access captured leads, organizations, and history."""
     leads = db.query(models.Lead).offset(skip).limit(limit).all()
     return leads
+
+
+# ==========================================
+# 12. PUBLIC WAITLIST SIGNUP (ACP-48)
+# ==========================================
+@app.post("/api/waitlist", status_code=status.HTTP_201_CREATED, response_model=schemas.WaitlistResponse)
+@limiter.limit("5/minute")
+def join_waitlist(
+    request: Request,
+    payload: schemas.WaitlistCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """
+    Public waitlist signup for AI Talent Oasis.
+    Email only — least friction. Duplicates return the same success message
+    (no email enumeration). New signups get a confirmation email in background.
+    """
+    entry = models.WaitlistEntry(
+        email=payload.email,
+        source="ai-talent-oasis",
+    )
+
+    try:
+        db.add(entry)
+        db.commit()
+        db.refresh(entry)
+    except IntegrityError:
+        # Duplicate — no new row, no resend. Same message, no leak.
+        db.rollback()
+        return {"message": "You're on the list!"}
+
+    # Only new signups get the confirmation email.
+    background_tasks.add_task(
+        utils.send_waitlist_confirmation_email,
+        email=entry.email,
+    )
+
+    return {"message": "You're on the list!"}
+
+
+# ==========================================
+# 13. ADMIN: VIEW WAITLIST SIGNUPS
+# ==========================================
+@app.get("/api/admin/waitlist", response_model=list[schemas.WaitlistEntryResponse])
+def get_waitlist_entries(
+    skip: int = 0,
+    limit: int = 100,
+    current_user: models.User = Depends(dependencies.get_current_admin),
+    db: Session = Depends(get_db),
+):
+    """Secure route for dashboard to view AI Talent Oasis waitlist signups."""
+    entries = (
+        db.query(models.WaitlistEntry)
+        .order_by(models.WaitlistEntry.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    return entries   

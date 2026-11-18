@@ -21,16 +21,16 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     try:
         # 1. Crack open the token using our secret key
         payload = jwt.decode(token, security.SECRET_KEY, algorithms=[security.ALGORITHM])
-        
+
         # 2. Extract the email (we saved it as "sub" during login)
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-            
+
     except JWTError:
         # If the token is expired, fake, or corrupted, block them immediately
         raise credentials_exception
@@ -43,9 +43,24 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     # 4. Bank-Grade Check: Are they deactivated?
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="This account has been deactivated."
         )
 
     # If they pass all checks, hand the user object to the endpoint
     return user
+
+
+def get_current_admin(current_user: models.User = Depends(get_current_user)):
+    """
+    Admin gate. Builds on get_current_user (so all the token/active checks
+    already happened) and adds one extra check: is_admin must be True.
+
+    /api/admin/* route. A logged-in non-admin gets 403.
+    """
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user

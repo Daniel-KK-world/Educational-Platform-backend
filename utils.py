@@ -131,3 +131,48 @@ def send_lead_magnet_email(delivery_id: int, email: str, name: str, mapping: dic
                 logger.error(f"[lead-magnet] Could not record FAILED status: {commit_err}")
     finally:
         db.close()
+
+
+# ─────────────────────────────────────────────
+# WAITLIST CONFIRMATION EMAIL (ACP-48)
+# ─────────────────────────────────────────────
+def send_waitlist_confirmation_email(email: str):
+    """
+    Transactional confirmation for AI Talent Oasis waitlist signup.
+    Fire-and-forget from a FastAPI BackgroundTask. No DB row to update —
+    the waitlist entry is already saved; this is pure notification.
+    """
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [email],
+            "subject": "You're on the AI Talent Oasis waitlist 🎉",
+            "html": """
+                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+                    <h2>You're on the list 🎉</h2>
+                    <p>Thanks for joining the <b>AI Talent Oasis</b> waitlist.</p>
+                    <p>You're in — we'll email you the moment early access opens up.
+                       No action needed on your side. Just sit tight.</p>
+                    <br>
+                    <p>Best regards,</p>
+                    <p><b>Hawkman Team</b></p>
+                </div>
+            """,
+            "text": (
+                "You're on the AI Talent Oasis waitlist.\n\n"
+                "You're in — we'll email you the moment early access opens up.\n"
+                "No action needed on your side. Just sit tight.\n\n"
+                "— Hawkman Team"
+            ),
+        }
+
+        email_response = resend.Emails.send(params)
+        logger.info(
+            f"[waitlist] Confirmation sent to {email}. "
+            f"Message ID: {email_response.get('id') if isinstance(email_response, dict) else email_response}"
+        )
+        return True
+
+    except Exception as e:
+        logger.error(f"[waitlist] Failed to send confirmation to {email}: {e}")
+        return False

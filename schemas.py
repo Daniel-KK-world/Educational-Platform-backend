@@ -1,15 +1,16 @@
 from datetime import datetime
 from typing import List
 import re
-import enum 
+import enum
 from pydantic import BaseModel, EmailStr, Field, field_validator
+
 
 # ==========================================
 # REGISTER SCHEMA (The strict bouncer)
 # ==========================================
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
-    email: EmailStr 
+    email: EmailStr
     password: str = Field(..., min_length=8, max_length=72)
 
     @field_validator('password')
@@ -76,7 +77,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     is_active: bool
     is_verified: bool
-    
+
     class Config:
         from_attributes = True
 
@@ -107,8 +108,9 @@ class CourseProgressResponse(BaseModel):
     streak_count: int
     total_xp: int
     unlocked_level: int
-    completed_days: List[int]   # List of day IDs the user has completed
-    
+    completed_days: List[int]
+
+
 class ExperienceLevelEnum(str, enum.Enum):
     BEGINNER = "BEGINNER"
     ADVANCED = "ADVANCED"
@@ -118,7 +120,7 @@ class LeadOptInCreate(BaseModel):
     email: EmailStr
     organization: str = Field(..., min_length=2, max_length=150)
     experience_level: ExperienceLevelEnum
-    cf_turnstile_response: str 
+    cf_turnstile_response: str
 
     @field_validator('email')
     @classmethod
@@ -144,6 +146,37 @@ class LeadWithDeliveriesResponse(BaseModel):
     organization: str
     created_at: datetime
     deliveries: List[LeadDeliveryRead] = []
+
+    class Config:
+        from_attributes = True
+
+
+# ==========================================
+# WAITLIST SCHEMAS (ACP-48)
+# ==========================================
+class WaitlistCreate(BaseModel):
+    """Public signup — email only, least friction."""
+    email: EmailStr
+
+    @field_validator('email')
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class WaitlistResponse(BaseModel):
+    """Returned for both new signups and duplicates — same message, no leak."""
+    message: str
+
+
+class WaitlistEntryResponse(BaseModel):
+    """Admin view of a single entry."""
+    id: int
+    email: EmailStr
+    source: str
+    status: str
+    created_at: datetime
+    invited_at: datetime | None
 
     class Config:
         from_attributes = True
